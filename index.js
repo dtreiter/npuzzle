@@ -7,6 +7,8 @@ class Tile {
         this.fill = opts.fill;
         this.number = opts.number;
 
+        this.animationSpeed = 60;
+
         // Create the svg rect.
         let rectPos = this._getRectPosition(this.row, this.col);
         this.rect = this.svg
@@ -32,10 +34,10 @@ class Tile {
 
     move(row, col) {
         let rectPos = this._getRectPosition(row, col);
-        this.rect.move(rectPos.x, rectPos.y);
+        this.rect.animate(this.animationSpeed).move(rectPos.x, rectPos.y);
 
-        let textPos = this._getTextPosition(x, y);
-        this.text.attr({
+        let textPos = this._getTextPosition(row, col);
+        this.text.animate(this.animationSpeed).attr({
             x: textPos.x,
             y: textPos.y,
         });
@@ -127,6 +129,11 @@ class Puzzle {
             }
         }
 
+    }
+
+    move(row, col) {
+        // TODO
+        this.tiles[col][row].move(row, col + 1);
     }
 }
 
