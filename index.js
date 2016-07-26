@@ -72,10 +72,12 @@ class Hole {
 
 class Puzzle {
     constructor(opts) {
-        this.svg = opts.svg;
+        this.container = opts.container;
         this.size = opts.size;
         this.width = opts.width;
         this.height = opts.height;
+
+        this.svg = SVG(this.container).size(this.width, this.height);
 
         let tileSize = this.width / this.size;
         this.tiles = [];
@@ -89,7 +91,7 @@ class Puzzle {
                 if (num == this.size * this.size) {
                     // Create an empty space.
                     this.tiles[i].push(new Hole({
-                        svg: container,
+                        svg: this.svg,
                         size: tileSize,
                         x: x,
                         y: y,
@@ -98,7 +100,7 @@ class Puzzle {
                 else {
                     // Create tile
                     this.tiles[i].push(new Tile({
-                        svg: container,
+                        svg: this.svg,
                         fill: '#aaaaaa',
                         size: tileSize,
                         x: x,
@@ -108,18 +110,14 @@ class Puzzle {
                 }
             }
         }
-        console.log(this.tiles);
 
     }
 }
 
 
-let w = 200;
-let h = 200;
-let container = SVG('puzzle').size(w, h);
 let puzzle = new Puzzle({
-    svg: container,
-    width: w,
-    height: h,
+    container: document.getElementById('puzzle'),
+    width: 200,
+    height: 200,
     size: 3,
 });
