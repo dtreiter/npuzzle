@@ -1,23 +1,24 @@
 class Tile {
     constructor(opts) {
         this.svg = opts.svg;
-        this.x = opts.x;
-        this.y = opts.y;
+        this.row = opts.row;
+        this.col = opts.col;
         this.size = opts.size;
         this.fill = opts.fill;
         this.number = opts.number;
 
         // Create the svg rect.
+        let rectPos = this._getRectPosition(this.row, this.col);
         this.rect = this.svg
             .rect(this.size, this.size)
             .attr({
                 fill: this.fill,
-                x: this.x,
-                y: this.y,
+                x: rectPos.x,
+                y: rectPos.y,
             });
 
         // Create the svg text.
-        let textPos = this._getTextPosition(this.x, this.y);
+        let textPos = this._getTextPosition(this.row, this.col);
         this.text = this.svg
             .text(String(this.number))
             .attr({
@@ -29,8 +30,9 @@ class Tile {
 
     }
 
-    move(x, y) {
-        this.rect.move(x, y);
+    move(row, col) {
+        let rectPos = this._getRectPosition(row, col);
+        this.rect.move(rectPos.x, rectPos.y);
 
         let textPos = this._getTextPosition(x, y);
         this.text.attr({
@@ -39,10 +41,17 @@ class Tile {
         });
     }
 
-    _getTextPosition(x, y) {
+    _getRectPosition(row, col) {
         return {
-            x: x + this.size / 2,
-            y: y + 5, // TODO Should offset by actual text height
+            x: this.size * row,
+            y: this.size * col,
+        }
+    }
+
+    _getTextPosition(row, col) {
+        return {
+            x: this.size * row + this.size / 2,
+            y: this.size * col + 5, // TODO Should offset by actual text height
         }
     }
 }
@@ -51,21 +60,30 @@ class Hole {
     constructor(opts) {
         this.svg = opts.svg;
         this.size = opts.size;
-        this.x = opts.x;
-        this.y = opts.y;
+        this.row = opts.row;
+        this.col = opts.col;
 
         // Create a clear svg rect to make click handling easier.
+        let rectPos = this._getRectPosition(this.row, this.col);
         this.rect = this.svg
             .rect(this.size, this.size)
             .attr({
                 fill: 'rgba(0, 0, 0, 0)',
-                x: this.x,
-                y: this.y,
+                x: rectPos.x,
+                y: rectPos.y,
             });
     }
 
-    move(x, y) {
-        this.rect.move(x, y);
+    move(row, col) {
+        let rectPos = this._getRectPosition(row, col);
+        this.rect.move(rectPos.x, rectPos.y);
+    }
+
+    _getRectPosition(row, col) {
+        return {
+            x: this.size * row,
+            y: this.size * col,
+        }
     }
 }
 
@@ -85,16 +103,14 @@ class Puzzle {
             this.tiles.push([]);
             for (let j = 0; j < this.size; j++) {
                 let num = this.size * j + i + 1;
-                let x = tileSize * i;
-                let y = tileSize * j;
 
                 if (num == this.size * this.size) {
                     // Create an empty space.
                     this.tiles[i].push(new Hole({
                         svg: this.svg,
                         size: tileSize,
-                        x: x,
-                        y: y,
+                        row: i,
+                        col: j,
                     }));
                 }
                 else {
@@ -103,8 +119,8 @@ class Puzzle {
                         svg: this.svg,
                         fill: '#aaaaaa',
                         size: tileSize,
-                        x: x,
-                        y: y,
+                        row: i,
+                        col: j,
                         number: num,
                     }));
                 }
