@@ -7,17 +7,20 @@ class Tile {
         this.number = opts.number;
         this.visible = opts.visible;
 
-        this.animationSpeed = 80;
+        this.Durations = {
+            SLIDE: 80,
+            FADE: 800,
+            WAIT: 300,
+        };
 
         this.$el = this._createTileDiv();
-
         this.$container.append(this.$el);
         this._setupClickHandler();
 
         if (!this.visible) {
             setTimeout(() => {
                 this._hide();
-            }, 300)
+            }, this.Durations.WAIT);
         }
     }
 
@@ -26,7 +29,7 @@ class Tile {
         move(this.$el[0])
             .set('left', pos.x)
             .set('top', pos.y)
-            .duration(this.animationSpeed)
+            .duration(this.Durations.SLIDE)
             .end();
 
         this.row = row;
@@ -37,7 +40,7 @@ class Tile {
         move(this.$el[0])
             .set('opacity', 0)
             .scale(0.8)
-            .duration(800)
+            .duration(this.Durations.FADE)
             .end();
     }
 
