@@ -20,10 +20,10 @@ class Tile {
     }
 
     move(row, col) {
-        let rectPos = this._getRectPosition(row, col);
+        let pos = this._getRectPosition(row, col);
         move(this.$el[0])
-            .set('left', rectPos.x)
-            .set('top', rectPos.y)
+            .set('left', pos.x)
+            .set('top', pos.y)
             .duration(this.animationSpeed)
             .end();
 
@@ -35,13 +35,14 @@ class Tile {
         setTimeout(() => {
             move(this.$el[0])
                 .set('opacity', 0)
-                .duration(1000)
+                .scale(0.8)
+                .duration(800)
                 .end();
-        }, 500)
+        }, 300)
     }
 
     _createTileDiv() {
-        let rectPos = this._getRectPosition(this.row, this.col);
+        let pos = this._getRectPosition(this.row, this.col);
         return $('<div>')
             .html(String(this.number))
             .addClass('tile')
@@ -49,21 +50,21 @@ class Tile {
                 'width': String(this.size) + 'px',
                 'height': String(this.size) + 'px',
                 'line-height': String(this.size) + 'px',
-                'left': rectPos.x,
-                'top': rectPos.y,
+                'left': pos.x,
+                'top': pos.y,
             });
     }
 
     _setupClickHandler() {
         this.$el.on('click', () => {
-            puzzle.move(this.col, this.row);
+            puzzle.move(this.row, this.col);
         });
     }
 
     _getRectPosition(row, col) {
         return {
-            x: this.size * row,
-            y: this.size * col,
+            x: this.size * col,
+            y: this.size * row,
         }
     }
 }
@@ -78,10 +79,10 @@ class Puzzle {
 
         let tileSize = this.width / this.size;
         this.tiles = [];
-        for (let i = 0; i < this.size; i++) {
+        for (let row = 0; row < this.size; row++) {
             this.tiles.push([]);
-            for (let j = 0; j < this.size; j++) {
-                let num = this.size * j + i + 1;
+            for (let col = 0; col < this.size; col++) {
+                let num = this.size * row + col + 1;
 
                 let visible = true;
                 if (num == this.size * this.size) {
@@ -89,12 +90,12 @@ class Puzzle {
                     visible = false;
                 }
 
-                this.tiles[i].push(new Tile({
+                this.tiles[row].push(new Tile({
                     $container: this.$container,
                     visible: visible,
                     size: tileSize,
-                    row: i,
-                    col: j,
+                    row: row,
+                    col: col,
                     number: num,
                 }));
             }
@@ -104,7 +105,7 @@ class Puzzle {
 
     move(row, col) {
         // TODO
-        this.tiles[col][row].move(row, col + 1);
+        this.tiles[row][col].move(row, col + 1);
     }
 }
 
