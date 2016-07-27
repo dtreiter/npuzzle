@@ -15,7 +15,9 @@ class Tile {
         this._setupClickHandler();
 
         if (!this.visible) {
-            this._hide();
+            setTimeout(() => {
+                this._hide();
+            }, 300)
         }
     }
 
@@ -32,13 +34,11 @@ class Tile {
     }
 
     _hide() {
-        setTimeout(() => {
-            move(this.$el[0])
-                .set('opacity', 0)
-                .scale(0.8)
-                .duration(800)
-                .end();
-        }, 300)
+        move(this.$el[0])
+            .set('opacity', 0)
+            .scale(0.8)
+            .duration(800)
+            .end();
     }
 
     _createTileDiv() {
