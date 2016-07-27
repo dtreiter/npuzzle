@@ -1,84 +1,63 @@
 class Tile {
     constructor(opts) {
-        this.svg = opts.svg;
+        this.$container = opts.$container;
         this.row = opts.row;
         this.col = opts.col;
         this.size = opts.size;
-        this.fill = opts.fill;
         this.number = opts.number;
+        this.visible = opts.visible;
 
-        this.animationSpeed = 60;
+        this.animationSpeed = 80;
 
-        // Create the svg rect.
-        let rectPos = this._getRectPosition(this.row, this.col);
-        this.rect = this.svg
-            .rect(this.size, this.size)
-            .attr({
-                fill: this.fill,
-                x: rectPos.x,
-                y: rectPos.y,
-            });
+        this.$el = this._createTileDiv();
 
-        // Create the svg text.
-        let textPos = this._getTextPosition(this.row, this.col);
-        this.text = this.svg
-            .text(String(this.number))
-            .attr({
-                x: textPos.x,
-                y: textPos.y,
-                'text-anchor': 'middle',
-                'dominant-baseline': 'hanging',
-            });
+        this.$container.append(this.$el);
+        this._setupClickHandler();
 
+        if (!this.visible) {
+            this._hide();
+        }
     }
 
     move(row, col) {
         let rectPos = this._getRectPosition(row, col);
-        this.rect.animate(this.animationSpeed).move(rectPos.x, rectPos.y);
+        move(this.$el[0])
+            .set('left', rectPos.x)
+            .set('top', rectPos.y)
+            .duration(this.animationSpeed)
+            .end();
 
-        let textPos = this._getTextPosition(row, col);
-        this.text.animate(this.animationSpeed).attr({
-            x: textPos.x,
-            y: textPos.y,
+        this.row = row;
+        this.col = col;
+    }
+
+    _hide() {
+        setTimeout(() => {
+            move(this.$el[0])
+                .set('opacity', 0)
+                .duration(1000)
+                .end();
+        }, 500)
+    }
+
+    _createTileDiv() {
+        let rectPos = this._getRectPosition(this.row, this.col);
+        return $('<div>')
+            .html(String(this.number))
+            .addClass('tile')
+            .css({
+                'width': String(this.size) + 'px',
+                'height': String(this.size) + 'px',
+                'line-height': String(this.size) + 'px',
+                'left': rectPos.x,
+                'top': rectPos.y,
+            });
+    }
+
+    _setupClickHandler() {
+        this.$el.on('click', () => {
+            puzzle.move(this.col, this.row);
         });
-    }
-
-    _getRectPosition(row, col) {
-        return {
-            x: this.size * row,
-            y: this.size * col,
-        }
-    }
-
-    _getTextPosition(row, col) {
-        return {
-            x: this.size * row + this.size / 2,
-            y: this.size * col + 5, // TODO Should offset by actual text height
-        }
-    }
-}
-
-class Hole {
-    constructor(opts) {
-        this.svg = opts.svg;
-        this.size = opts.size;
-        this.row = opts.row;
-        this.col = opts.col;
-
-        // Create a clear svg rect to make click handling easier.
-        let rectPos = this._getRectPosition(this.row, this.col);
-        this.rect = this.svg
-            .rect(this.size, this.size)
-            .attr({
-                fill: 'rgba(0, 0, 0, 0)',
-                x: rectPos.x,
-                y: rectPos.y,
-            });
-    }
-
-    move(row, col) {
-        let rectPos = this._getRectPosition(row, col);
-        this.rect.move(rectPos.x, rectPos.y);
     }
 
     _getRectPosition(row, col) {
@@ -92,12 +71,10 @@ class Hole {
 
 class Puzzle {
     constructor(opts) {
-        this.container = opts.container;
+        this.$container = opts.$container;
         this.size = opts.size;
         this.width = opts.width;
         this.height = opts.height;
-
-        this.svg = SVG(this.container).size(this.width, this.height);
 
         let tileSize = this.width / this.size;
         this.tiles = [];
@@ -106,26 +83,20 @@ class Puzzle {
             for (let j = 0; j < this.size; j++) {
                 let num = this.size * j + i + 1;
 
+                let visible = true;
                 if (num == this.size * this.size) {
-                    // Create an empty space.
-                    this.tiles[i].push(new Hole({
-                        svg: this.svg,
-                        size: tileSize,
-                        row: i,
-                        col: j,
-                    }));
+                    // The empty space is represented as a hidden tile for simplicity.
+                    visible = false;
                 }
-                else {
-                    // Create tile
-                    this.tiles[i].push(new Tile({
-                        svg: this.svg,
-                        fill: '#aaaaaa',
-                        size: tileSize,
-                        row: i,
-                        col: j,
-                        number: num,
-                    }));
-                }
+
+                this.tiles[i].push(new Tile({
+                    $container: this.$container,
+                    visible: visible,
+                    size: tileSize,
+                    row: i,
+                    col: j,
+                    number: num,
+                }));
             }
         }
 
@@ -139,8 +110,8 @@ class Puzzle {
 
 
 let puzzle = new Puzzle({
-    container: document.getElementById('puzzle'),
-    width: 200,
-    height: 200,
+    $container: $('#puzzle'),
+    width: 300,
+    height: 300,
     size: 3,
 });
