@@ -36,6 +36,10 @@ class Tile {
         this.col = col;
     }
 
+    isEmpty() {
+        return !this.visible;
+    }
+
     _hide() {
         move(this.$el[0])
             .set('opacity', 0)
@@ -107,12 +111,76 @@ class Puzzle {
                 }));
             }
         }
+    }
 
+    /*
+     * Determines if the empty square is in the same row / col as the provided
+     * (row, col). Returns the empty square's location if so.
+     *
+     * The basic algorithm is to start at (row, col) and step outward in all 4
+     * directions looking for the empty tile.
+     */
+    _findEmptyTile(row, col) {
+        // The max distance in any direction to the end of the puzzle.
+        let maxDistance = Math.max(row, col, this.size - row, this.size - col);
+
+        for (let i = 1; i < maxDistance; i++) {
+            if (this._isEmpty(row - i, col)) {
+                return {
+                    row: row - i,
+                    col: col,
+                }
+            }
+            else if (this._isEmpty(row + i, col)) {
+                return {
+                    row: row + i,
+                    col: col,
+                }
+            }
+            else if (this._isEmpty(row, col - i)) {
+                return {
+                    row: row,
+                    col: col - i,
+                }
+            }
+            else if (this._isEmpty(row, col + i)) {
+                return {
+                    row: row,
+                    col: col + i,
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /*
+     * Determines if the tile at (row, col) is the empty tile.
+     */
+    _isEmpty(row, col) {
+        // Check if out of bounds.
+        if (row < 0 || row >= this.size || col < 0 || col >= this.size) {
+            return false;
+        }
+
+        return this.tiles[row][col].isEmpty();
+    }
+
+    /*
+     * Moves a row / column of tiles in the interval (start, end).
+     *
+     * The idea is to start at the end (the empty square) and move each tile
+     * preceding it until reaching start.
+     */
+    _moveTiles(start, end) {
+        console.log(start, end);
     }
 
     move(row, col) {
-        // TODO
-        this.tiles[row][col].move(row, col + 1);
+        let emptyTile = this._findEmptyTile(row, col);
+        if (emptyTile !== null) {
+            this._moveTiles({row: row, col: col}, emptyTile);
+        }
     }
 }
 
