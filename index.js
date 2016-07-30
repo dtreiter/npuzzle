@@ -80,8 +80,12 @@ class Puzzle {
         this.width = opts.width;
         this.height = opts.height;
 
-        let tileSize = this.width / this.size;
         this.tiles = [];
+        this._generateTiles();
+    }
+
+    _generateTiles() {
+        let tileSize = this.width / this.size;
         for (let row = 0; row < this.size; row++) {
             this.tiles.push([]);
             for (let col = 0; col < this.size; col++) {
