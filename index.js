@@ -81,8 +81,9 @@ class Puzzle {
     constructor(opts) {
         this.$container = opts.$container;
         this.size = opts.size;
-        this.width = opts.width;
-        this.height = opts.height;
+
+        this.width = this.$container.width();
+        this.height = this.$container.height();
 
         this.tiles = [];
         this._generateTiles();
@@ -187,7 +188,5 @@ class Puzzle {
 
 let puzzle = new Puzzle({
     $container: $('#puzzle'),
-    width: 300,
-    height: 300,
     size: 3,
 });
