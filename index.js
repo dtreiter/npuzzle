@@ -201,6 +201,7 @@ let Puzzle = (() => {
             }
 
             this.tiles[row][col] = emptyTile;
+            emptyTile.move(row, col);
         }
 
         move(row, col) {
