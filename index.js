@@ -1,4 +1,6 @@
 let Puzzle = (() => {
+    'use strict';
+
     class Tile {
         constructor(opts) {
             this.$container = opts.$container;
@@ -126,7 +128,7 @@ let Puzzle = (() => {
             // The max distance in any direction to the end of the puzzle.
             let maxDistance = Math.max(row, col, this.size - row, this.size - col);
 
-            for (let i = 1; i < maxDistance; i++) {
+            for (let i = 1; i <= maxDistance; i++) {
                 if (this._isEmpty(row - i, col)) {
                     return {
                         row: row - i,
@@ -175,7 +177,30 @@ let Puzzle = (() => {
          * preceding it until reaching start.
          */
         _moveTiles(start, end) {
-            console.log(start, end);
+            let emptyTile = this.tiles[end.row][end.col];
+
+            // Create a normalized direction vector.
+            let direction = {
+                r: start.row - end.row,
+                c: start.col - end.col,
+            };
+            // Normalize
+            if (direction.r != 0) direction.r /= Math.abs(direction.r);
+            if (direction.c != 0) direction.c /= Math.abs(direction.c);
+
+            let row = end.row;
+            let col = end.col;
+            while (row != start.row || col != start.col) {
+                let nextRow = row + direction.r;
+                let nextCol = col + direction.c;
+                this.tiles[row][col] = this.tiles[nextRow][nextCol];
+                this.tiles[row][col].move(row, col);
+
+                row = nextRow;
+                col = nextCol;
+            }
+
+            this.tiles[row][col] = emptyTile;
         }
 
         move(row, col) {
