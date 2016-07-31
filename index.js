@@ -88,7 +88,11 @@ let Puzzle = (() => {
             this.size = opts.size;
 
             this.width = this.$container.width();
-            this.height = this.$container.height();
+            this.height = this.width;
+
+            // Due to using absolute css positioning, the #puzzle container div
+            // cannot know it's height -- set it manually here.
+            this.$container.height(this.height);
 
             this.isScrambling = false;
             this.tiles = [];

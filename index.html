@@ -1,9 +1,22 @@
 <html>
   <head>
+    <link rel="stylesheet" type="text/css" href="https://bootswatch.com/lumen/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="index.css">
   </head>
+
   <body>
-    <div id="puzzle"></div>
+    <div class="container-fluid">
+      <div class="row">
+        <div id="puzzle-container" class="col-sm-8">
+          <div id="puzzle"></div>
+        </div>
+
+        <div id="panel" class="well col-sm-4">
+          <button class="btn btn-lg btn-warning">Reset</button>
+          <button class="btn btn-lg btn-primary">Scramble</button>
+        </div>
+      </div>
+    </div>
 
     <script src="jquery.min.js"></script>
     <script src="move.js"></script>
