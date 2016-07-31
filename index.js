@@ -68,8 +68,12 @@ let Puzzle = (() => {
         }
 
         _setupClickHandler() {
-            this.$el.on('click', () => {
-                puzzle.move(this.row, this.col);
+            this.$el.on('touchstart click', (e) => {
+                this.puzzle.move(this.row, this.col);
+
+                // If the `touchstart` event is triggered, prevent the `click`
+                // event from firing.
+                e.preventDefault();
             });
         }
 
