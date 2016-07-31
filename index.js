@@ -1,6 +1,13 @@
 let Puzzle = (() => {
     'use strict';
 
+    let TimeConstants = {
+        SLIDE: 80,
+        FADE: 800,
+        WAIT: 300,
+        SCRAMBLE: 1200,
+    };
+
     class Tile {
         constructor(opts) {
             this.$container = opts.$container;
@@ -9,12 +16,7 @@ let Puzzle = (() => {
             this.size = opts.size;
             this.number = opts.number;
             this.visible = opts.visible;
-
-            this.Durations = {
-                SLIDE: 80,
-                FADE: 800,
-                WAIT: 300,
-            };
+            this.puzzle = opts.puzzle; // Parent puzzle
 
             this.$el = this._createTileDiv();
             this.$container.append(this.$el);
@@ -23,7 +25,7 @@ let Puzzle = (() => {
             if (!this.visible) {
                 setTimeout(() => {
                     this._hide();
-                }, this.Durations.WAIT);
+                }, TimeConstants.WAIT);
             }
         }
 
@@ -32,7 +34,7 @@ let Puzzle = (() => {
             move(this.$el[0])
                 .set('left', pos.x)
                 .set('top', pos.y)
-                .duration(this.Durations.SLIDE)
+                .duration(TimeConstants.SLIDE)
                 .end();
 
             this.row = row;
@@ -47,7 +49,7 @@ let Puzzle = (() => {
             move(this.$el[0])
                 .set('opacity', 0)
                 .scale(0.8)
-                .duration(this.Durations.FADE)
+                .duration(TimeConstants.FADE)
                 .end();
         }
 
@@ -90,6 +92,8 @@ let Puzzle = (() => {
 
             this.tiles = [];
             this._generateTiles();
+
+            setTimeout(this.scramble.bind(this), TimeConstants.SCRAMBLE);
         }
 
         _generateTiles() {
@@ -106,6 +110,7 @@ let Puzzle = (() => {
                     }
 
                     this.tiles[row].push(new Tile({
+                        puzzle: this,
                         $container: this.$container,
                         visible: visible,
                         size: tileSize,
@@ -208,6 +213,40 @@ let Puzzle = (() => {
             let emptyTile = this._findEmptyTile(row, col);
             if (emptyTile !== null) {
                 this._moveTiles({row: row, col: col}, emptyTile);
+            }
+        }
+
+        /*
+         * Scrambles the puzzle.
+         *
+         * The idea is to move the empty tile around randomly for about
+         * `C * numTiles` moves, where `C` is large.
+         */
+        scramble() {
+            let numTiles = this.size * this.size;
+            let numMoves = 30 * numTiles;
+
+            // TODO: Get actual emptyTile location.
+            let emptyTile = this.tiles[this.size-1][this.size-1];
+            for (let i = 0; i < numMoves; i++) {
+                let row = emptyTile.row;
+                let col = emptyTile.col;
+                let direction = Math.floor(4 * Math.random());
+
+                if (direction == 0 && row - 1 >= 0) {
+                    row = row - 1;
+                }
+                else if (direction == 1 && row + 1 < this.size) {
+                    row = row + 1;
+                }
+                else if (direction == 2 && col - 1 >= 0) {
+                    col = col - 1;
+                }
+                else if (direction == 3 && col + 1 < this.size) {
+                    col = col + 1;
+                }
+
+                this.move(row, col);
             }
         }
     }
