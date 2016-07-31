@@ -9,6 +9,10 @@ div#puzzle {
 	border-radius: 5px;
 }
 
+div#panel {
+	text-align: center;
+}
+
 div.tile {
 	position: absolute;
 	background-color: #eee4da;
