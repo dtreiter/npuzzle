@@ -90,6 +90,7 @@ let Puzzle = (() => {
             this.width = this.$container.width();
             this.height = this.$container.height();
 
+            this.isScrambling = false;
             this.tiles = [];
             this._generateTiles();
 
@@ -213,7 +214,24 @@ let Puzzle = (() => {
             let emptyTile = this._findEmptyTile(row, col);
             if (emptyTile !== null) {
                 this._moveTiles({row: row, col: col}, emptyTile);
+
+                if (!this.isScrambling && this.isSolved()) {
+                    alert('Congrats!');
+                }
             }
+        }
+
+        isSolved() {
+            for (let row = 0; row < this.size; row++) {
+                for (let col = 0; col < this.size; col++) {
+                    let num = row * this.size + col + 1;
+                    if (this.tiles[row][col].number !== num) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
         /*
@@ -223,6 +241,8 @@ let Puzzle = (() => {
          * `C * numTiles` moves, where `C` is large.
          */
         scramble() {
+            this.isScrambling = true;
+
             let numTiles = this.size * this.size;
             let numMoves = 30 * numTiles;
 
@@ -248,6 +268,8 @@ let Puzzle = (() => {
 
                 this.move(row, col);
             }
+
+            this.isScrambling = false;
         }
     }
 
