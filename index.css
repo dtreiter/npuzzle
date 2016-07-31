@@ -2,6 +2,11 @@ body {
 	background-color: #eeeeee;
 }
 
+div#page {
+	top: 2%;
+	position: relative;
+}
+
 div#puzzle {
 	position: relative;
 	margin: auto;
