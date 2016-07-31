@@ -15,6 +15,7 @@ div#panel {
 
 div.tile {
 	position: absolute;
+	color: #000000;
 	background-color: #eee4da;
 	border-radius: 10%;
 	box-shadow: 0px 0px 0px 1px #888888 inset;
