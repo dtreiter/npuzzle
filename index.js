@@ -119,7 +119,7 @@ let Puzzle = (() => {
                     let num = this.size * row + col + 1;
 
                     let visible = true;
-                    if (num == this.size * this.size) {
+                    if (num === this.size * this.size) {
                         // The empty space is represented as a hidden tile for simplicity.
                         visible = false;
                     }
@@ -314,16 +314,16 @@ let Puzzle = (() => {
                 let col = emptyTile.col;
                 let direction = Math.floor(4 * Math.random());
 
-                if (direction == 0 && row - 1 >= 0) {
+                if (direction === 0 && row - 1 >= 0) {
                     row = row - 1;
                 }
-                else if (direction == 1 && row + 1 < this.size) {
+                else if (direction === 1 && row + 1 < this.size) {
                     row = row + 1;
                 }
-                else if (direction == 2 && col - 1 >= 0) {
+                else if (direction === 2 && col - 1 >= 0) {
                     col = col - 1;
                 }
-                else if (direction == 3 && col + 1 < this.size) {
+                else if (direction === 3 && col + 1 < this.size) {
                     col = col + 1;
                 }
 
