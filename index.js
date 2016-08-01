@@ -255,6 +255,38 @@ let Puzzle = (() => {
             return true;
         }
 
+        _generateEmptyMatrix(size) {
+            let matrix = [];
+            for (let i = 0; i < size; i++) {
+                matrix.push(Array(size));
+            }
+
+            return matrix;
+        }
+
+        /*
+         * Restores the puzzle to the solved state.
+         *
+         * Works by creating a new tile array, putting the tiles in the right
+         * place, then replacing `this.tiles` with the new array.
+         */
+        reset() {
+            let newTiles = this._generateEmptyMatrix(this.size);
+            for (let row = 0; row < this.size; row++) {
+                for (let col = 0; col < this.size; col++) {
+                    let curTile = this.tiles[row][col];
+                    let curNum = curTile.number;
+                    let curRow = Math.floor((curNum - 1) / this.size);
+                    let curCol = (curNum - 1) % this.size;
+
+                    newTiles[curRow][curCol] = curTile;
+                    curTile.move(curRow, curCol);
+                }
+            }
+
+            this.tiles = newTiles;
+        }
+
         /*
          * Scrambles the puzzle.
          *
