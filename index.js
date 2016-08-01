@@ -131,6 +131,19 @@ let Puzzle = (() => {
             }
         }
 
+        findEmptyTile() {
+            for (let row = 0; row < this.size; row++) {
+                for (let col = 0; col < this.size; col++) {
+                    if (this.tiles[row][col].isEmpty()) {
+                        return {
+                            row: row,
+                            col: col,
+                        };
+                    }
+                }
+            }
+        }
+
         /*
          * Determines if the empty square is in the same row / col as the provided
          * (row, col). Returns the empty square's location if so.
@@ -138,7 +151,7 @@ let Puzzle = (() => {
          * The basic algorithm is to start at (row, col) and step outward in all 4
          * directions looking for the empty tile.
          */
-        _findEmptyTile(row, col) {
+        _findEmptyTileSameRowCol(row, col) {
             // The max distance in any direction to the end of the puzzle.
             let maxDistance = Math.max(row, col, this.size - row, this.size - col);
 
@@ -219,7 +232,7 @@ let Puzzle = (() => {
         }
 
         move(row, col) {
-            let emptyTile = this._findEmptyTile(row, col);
+            let emptyTile = this._findEmptyTileSameRowCol(row, col);
             if (emptyTile !== null) {
                 this._moveTiles({row: row, col: col}, emptyTile);
 
@@ -254,8 +267,8 @@ let Puzzle = (() => {
             let numTiles = this.size * this.size;
             let numMoves = 30 * numTiles;
 
-            // TODO: Get actual emptyTile location.
-            let emptyTile = this.tiles[this.size-1][this.size-1];
+            let pos = this.findEmptyTile();
+            let emptyTile = this.tiles[pos.row][pos.col];
             for (let i = 0; i < numMoves; i++) {
                 let row = emptyTile.row;
                 let col = emptyTile.col;
