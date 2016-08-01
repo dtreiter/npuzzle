@@ -94,11 +94,17 @@ let Puzzle = (() => {
             this.width = this.$container.width();
             this.height = this.width;
 
+            this._States = {
+                SOLVED: 0,
+                SCRAMBLING: 1,
+                SCRAMBLED: 2,
+            };
+            this._state = this._States.SOLVED;
+
             // Due to using absolute css positioning, the #puzzle container div
             // cannot know it's height -- set it manually here.
             this.$container.height(this.height);
 
-            this.isScrambling = false;
             this.tiles = [];
             this._generateTiles();
 
@@ -236,7 +242,8 @@ let Puzzle = (() => {
             if (emptyTile !== null) {
                 this._moveTiles({row: row, col: col}, emptyTile);
 
-                if (!this.isScrambling && this.isSolved()) {
+                if (this._state === this._States.SCRAMBLED && this.isSolved()) {
+                    this._state = this._States.SOLVED;
                     alert('Congrats!');
                 }
             }
@@ -285,6 +292,7 @@ let Puzzle = (() => {
             }
 
             this.tiles = newTiles;
+            this._state = this._States.SOLVED;
         }
 
         /*
@@ -294,7 +302,7 @@ let Puzzle = (() => {
          * `C * numTiles` moves, where `C` is large.
          */
         scramble() {
-            this.isScrambling = true;
+            this._state = this._States.SCRAMBLING;
 
             let numTiles = this.size * this.size;
             let numMoves = 30 * numTiles;
@@ -322,7 +330,7 @@ let Puzzle = (() => {
                 this.move(row, col);
             }
 
-            this.isScrambling = false;
+            this._state = this._States.SCRAMBLED;
         }
     }
 
