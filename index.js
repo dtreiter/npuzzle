@@ -25,7 +25,7 @@ let Puzzle = (() => {
 
             if (!this.visible) {
                 setTimeout(() => {
-                    this._hide();
+                    this.hide();
                 }, TimeConstants.WAIT);
             }
         }
@@ -46,7 +46,7 @@ let Puzzle = (() => {
             return !this.visible;
         }
 
-        _hide() {
+        hide() {
             move(this.$el[0])
                 .set('opacity', 0)
                 .scale(0.8)
@@ -176,7 +176,7 @@ let Puzzle = (() => {
             }
         }
 
-        findEmptyTile() {
+        _findEmptyTile() {
             for (let row = 0; row < this.size; row++) {
                 for (let col = 0; col < this.size; col++) {
                     if (this.tiles[row][col].isEmpty()) {
@@ -277,6 +277,11 @@ let Puzzle = (() => {
         }
 
         move(row, col) {
+            // Don't allow moving when in the solved state.
+            if (this._state === this._States.SOLVED) {
+                return;
+            }
+
             let emptyTile = this._findEmptyTileSameRowCol(row, col);
             if (emptyTile !== null) {
                 this._moveTiles({row: row, col: col}, emptyTile);
@@ -342,11 +347,12 @@ let Puzzle = (() => {
          */
         scramble() {
             this._state = this._States.SCRAMBLING;
+            this._hideEmptyTile();
 
             let numTiles = this.size * this.size;
             let numMoves = 30 * numTiles;
 
-            let pos = this.findEmptyTile();
+            let pos = this._findEmptyTile();
             let emptyTile = this.tiles[pos.row][pos.col];
             for (let i = 0; i < numMoves; i++) {
                 let row = emptyTile.row;
@@ -370,6 +376,11 @@ let Puzzle = (() => {
             }
 
             this._state = this._States.SCRAMBLED;
+        }
+
+        _hideEmptyTile() {
+            let pos = this._findEmptyTile();
+            this.tiles[pos.row][pos.col].hide();
         }
 
         _animateSolved() {
