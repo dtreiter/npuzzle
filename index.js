@@ -6,6 +6,7 @@ let Puzzle = (() => {
         FADE: 800,
         WAIT: 300,
         SCRAMBLE: 1200,
+        SHAKE: 200,
     };
 
     class Tile {
@@ -51,6 +52,44 @@ let Puzzle = (() => {
                 .scale(0.8)
                 .duration(TimeConstants.FADE)
                 .end();
+        }
+
+        /*
+         * Visually shakes the tile.
+         */
+        animateSolved() {
+            let rotation = 3; // Degrees
+
+            let straighten = () => {
+                move(this.$el[0])
+                    .rotate(0)
+                    .duration(TimeConstants.SHAKE)
+                    .end();
+            };
+
+            let shake = (numTimes) => {
+                move(this.$el[0])
+                    .rotate(rotation)
+                    .scale(1)
+                    .set('opacity', 1.0)
+                    .duration(TimeConstants.SHAKE)
+                    .then()
+                        .rotate(-2 * rotation)
+                        .duration(TimeConstants.SHAKE)
+                        .pop()
+                    .end(() => {
+                        setTimeout(() => {
+                            if (numTimes > 0) {
+                                shake(numTimes - 1);
+                            }
+                            else {
+                                straighten();
+                            }
+                        }, TimeConstants.SHAKE);
+                    });
+            }
+
+            shake(3);
         }
 
         _createTileDiv() {
@@ -244,7 +283,7 @@ let Puzzle = (() => {
 
                 if (this._state === this._States.SCRAMBLED && this.isSolved()) {
                     this._state = this._States.SOLVED;
-                    alert('Congrats!');
+                    this._animateSolved();
                 }
             }
         }
@@ -331,6 +370,14 @@ let Puzzle = (() => {
             }
 
             this._state = this._States.SCRAMBLED;
+        }
+
+        _animateSolved() {
+            for (let row of this.tiles) {
+                for (let tile of row) {
+                    tile.animateSolved();
+                }
+            }
         }
     }
 
