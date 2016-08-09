@@ -17,7 +17,6 @@ let Puzzle = (() => {
             this.size = opts.size;
             this.number = opts.number;
             this.visible = opts.visible;
-            this.puzzle = opts.puzzle; // Parent puzzle
 
             this.$el = this._createTileDiv();
             this.$container.append(this.$el);
@@ -108,7 +107,10 @@ let Puzzle = (() => {
 
         _setupClickHandler() {
             this.$el.on('touchstart click', (e) => {
-                this.puzzle.move(this.row, this.col);
+                $(document).triggerHandler('puzzle:tile:click', {
+                    row: this.row,
+                    col: this.col
+                });
 
                 // If the `touchstart` event is triggered, prevent the `click`
                 // event from firing.
@@ -147,6 +149,11 @@ let Puzzle = (() => {
             this.tiles = [];
             this._generateTiles();
 
+            // Listen for click events on tiles.
+            $(document).on('puzzle:tile:click', (e, pos) => {
+                this.move(pos.row, pos.col);
+            }.bind(this));
+
             setTimeout(this.scramble.bind(this), TimeConstants.SCRAMBLE);
         }
 
@@ -164,7 +171,6 @@ let Puzzle = (() => {
                     }
 
                     this.tiles[row].push(new Tile({
-                        puzzle: this,
                         $container: this.$container,
                         visible: visible,
                         size: tileSize,
