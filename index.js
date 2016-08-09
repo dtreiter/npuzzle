@@ -291,6 +291,7 @@ let Puzzle = (() => {
             let emptyTile = this._findEmptyTileSameRowCol(row, col);
             if (emptyTile !== null) {
                 this._moveTiles({row: row, col: col}, emptyTile);
+                $(document).triggerHandler('puzzle:move');
 
                 if (this._state === this._States.SCRAMBLED && this.isSolved()) {
                     this._state = this._States.SOLVED;
@@ -382,6 +383,7 @@ let Puzzle = (() => {
             }
 
             this._state = this._States.SCRAMBLED;
+            $(document).triggerHandler('puzzle:scramble');
         }
 
         _hideEmptyTile() {
@@ -409,15 +411,42 @@ let puzzle = new Puzzle({
 
 
 /* Create React components. */
+class MoveCounter extends React.Component {
+    constructor() {
+        super();
+
+        this.state = {
+            count: 0
+        };
+
+        $(document).on('puzzle:move', () => {
+            this.setState({count: this.state.count + 1});
+        }.bind(this));
+
+        $(document).on('puzzle:scramble', () => {
+            this.setState({count: 0});
+        }.bind(this));
+    }
+
+    render() {
+        return (
+            <h3>Moves: {this.state.count}</h3>
+        );
+    }
+}
+
 class Controls extends React.Component {
     render() {
         return (
-            <button
-                onClick={this.props.puzzle.scramble.bind(this.props.puzzle)}
-                className='btn btn-lg btn-wide btn-primary'
-            >
-                Scramble
-            </button>
+            <div>
+                <button
+                    onClick={this.props.puzzle.scramble.bind(this.props.puzzle)}
+                    className='btn btn-lg btn-wide btn-primary'
+                >
+                    Scramble
+                </button>
+                <MoveCounter />
+            </div>
         );
     }
 }
