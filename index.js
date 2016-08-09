@@ -400,3 +400,24 @@ let puzzle = new Puzzle({
     $container: $('#puzzle'),
     size: 3,
 });
+
+
+/* Create React components. */
+class Controls extends React.Component {
+    render() {
+        return (
+            <button
+                onClick={this.props.puzzle.scramble.bind(this.props.puzzle)}
+                className='btn btn-lg btn-wide btn-primary'
+            >
+                Scramble
+            </button>
+        );
+    }
+}
+
+
+ReactDOM.render(
+    <Controls puzzle={puzzle}/>,
+    document.getElementById('controls')
+);
