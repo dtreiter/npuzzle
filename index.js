@@ -295,6 +295,7 @@ let Puzzle = (() => {
 
                 if (this._state === this._States.SCRAMBLED && this.isSolved()) {
                     this._state = this._States.SOLVED;
+                    $(document).triggerHandler('puzzle:solved');
                     this._animateSolved();
                 }
             }
@@ -410,7 +411,7 @@ let puzzle = new Puzzle({
 });
 
 
-/* Create React components. */
+// Create React components.
 class MoveCounter extends React.Component {
     constructor() {
         super();
@@ -435,6 +436,77 @@ class MoveCounter extends React.Component {
     }
 }
 
+class TimeCounter extends React.Component {
+    constructor() {
+        super();
+
+        this.state = {
+            isTiming: false,
+            start: null,
+            label: '0:0.0',
+        };
+
+        $(document).on('puzzle:move', () => {
+            if (!this.state.isTiming) {
+                this.setState({
+                    isTiming: true,
+                    start: new Date(),
+                });
+            }
+        }.bind(this));
+
+        $(document).on('puzzle:scramble', () => {
+            this.setState({
+                isTiming: false,
+                start: null,
+                label: '0:0.0',
+            });
+        }.bind(this));
+
+        $(document).on('puzzle:solved', () => {
+            this.setState({
+                isTiming: false,
+            });
+        }.bind(this));
+
+        // If we used 100 ms exactly the 2nd millisecond digit on the clock
+        // would never change. Instead we use an interval slightly under 100 ms.
+        setInterval(this.updateTime.bind(this), 93);
+    }
+
+    // Formats a number to be 2 digits.
+    _formatTwoDigits(num) {
+        num = Math.floor(num);
+        if (num < 10) {
+            return '0' + num;
+        }
+
+        return String(num);
+    }
+
+    updateTime() {
+        if (!this.state.isTiming) {
+            return;
+        }
+
+        // Subtraction using JavaScript's Date object just gives us a time in
+        // milliseconds, so we have to do some manual math here.
+        let elapsed = new Date() - this.state.start;
+        let milliSeconds = this._formatTwoDigits((elapsed % 1000) / 10);
+        let seconds = this._formatTwoDigits((elapsed / 1000) % 60);
+        let minutes = Math.floor(elapsed / 1000 / 60);
+        let label = `${minutes}:${seconds}.${milliSeconds}`;
+
+        this.setState({label: label});
+    }
+
+    render() {
+        return (
+            <h3>Time: {this.state.label}</h3>
+        );
+    }
+}
+
 class Controls extends React.Component {
     render() {
         return (
@@ -445,6 +517,7 @@ class Controls extends React.Component {
                 >
                     Scramble
                 </button>
+                <TimeCounter />
                 <MoveCounter />
             </div>
         );
