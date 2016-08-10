@@ -44,3 +44,8 @@ button.btn-wide {
 div.well {
 	background-color: #e6e6e6;
 }
+
+h3 {
+	margin-top: 10px;
+	margin-bottom: 0px;
+}
