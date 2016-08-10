@@ -1,3 +1,8 @@
+import $ from 'jquery';
+import move from 'move-js';
+import React from 'react';
+import ReactDOM from 'react-dom';
+
 let Puzzle = (() => {
     'use strict';
 
@@ -152,7 +157,7 @@ let Puzzle = (() => {
             // Listen for click events on tiles.
             $(document).on('puzzle:tile:click', (e, pos) => {
                 this.move(pos.row, pos.col);
-            }.bind(this));
+            });
 
             setTimeout(this.scramble.bind(this), TimeConstants.SCRAMBLE);
         }
@@ -405,12 +410,6 @@ let Puzzle = (() => {
 })();
 
 
-let puzzle = new Puzzle({
-    $container: $('#puzzle'),
-    size: 3,
-});
-
-
 // Create React components.
 class MoveCounter extends React.Component {
     constructor() {
@@ -422,11 +421,11 @@ class MoveCounter extends React.Component {
 
         $(document).on('puzzle:move', () => {
             this.setState({count: this.state.count + 1});
-        }.bind(this));
+        });
 
         $(document).on('puzzle:scramble', () => {
             this.setState({count: 0});
-        }.bind(this));
+        });
     }
 
     render() {
@@ -453,7 +452,7 @@ class TimeCounter extends React.Component {
                     start: new Date(),
                 });
             }
-        }.bind(this));
+        });
 
         $(document).on('puzzle:scramble', () => {
             this.setState({
@@ -461,13 +460,13 @@ class TimeCounter extends React.Component {
                 start: null,
                 label: '0:0.0',
             });
-        }.bind(this));
+        });
 
         $(document).on('puzzle:solved', () => {
             this.setState({
                 isTiming: false,
             });
-        }.bind(this));
+        });
 
         // If we used 100 ms exactly the 2nd millisecond digit on the clock
         // would never change. Instead we use an interval slightly under 100 ms.
@@ -525,6 +524,13 @@ class Controls extends React.Component {
 }
 
 
+// Create puzzle instance.
+let puzzle = new Puzzle({
+    $container: $('#puzzle'),
+    size: 3,
+});
+
+// Render controls.
 ReactDOM.render(
     <Controls puzzle={puzzle}/>,
     document.getElementById('controls')
