@@ -6,3 +6,5 @@ be any size.
 
 My motivation for making this is to add a 'blind mode', requiring solving the
 puzzle from memory.
+
+You can play the game [here](http://danielreiter.org/npuzzle).
