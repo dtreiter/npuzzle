@@ -1,8 +1,3 @@
-import $ from 'jquery';
-import move from 'move-js';
-import React from 'react';
-import ReactDOM from 'react-dom';
-
 let Puzzle = (() => {
     'use strict';
 
@@ -410,118 +405,112 @@ let Puzzle = (() => {
 })();
 
 
-// Create React components.
-class MoveCounter extends React.Component {
-    constructor() {
-        super();
-
-        this.state = {
-            count: 0
-        };
-
-        $(document).on('puzzle:move', () => {
-            this.setState({count: this.state.count + 1});
+// Create Mithril components.
+var MoveCounter = {
+	controller: function() {
+        var count = m.prop(0);
+        $(document).on('puzzle:move', function() {
+            count(count() + 1);
         });
 
-        $(document).on('puzzle:scramble', () => {
-            this.setState({count: 0});
+        $(document).on('puzzle:scramble', function() {
+            count(0);
         });
+
+		return {
+			count: count
+		};
+	},
+
+	view: function(ctrl) {
+        return m('h3', 'Moves: ' + ctrl.count());
     }
+};
 
-    render() {
-        return (
-            <h3>Moves: {this.state.count}</h3>
-        );
-    }
-}
+var TimeCounter = {
+    controller: function() {
+        var isTiming = m.prop(false);
+        var start = m.prop(null);
+        var label = m.prop('0:0.0');
 
-class TimeCounter extends React.Component {
-    constructor() {
-        super();
-
-        this.state = {
-            isTiming: false,
-            start: null,
-            label: '0:0.0',
-        };
-
-        $(document).on('puzzle:move', () => {
-            if (!this.state.isTiming) {
-                this.setState({
-                    isTiming: true,
-                    start: new Date(),
-                });
+        $(document).on('puzzle:move', function() {
+            if (!isTiming()) {
+                isTiming(true);
+                start(new Date());
             }
         });
 
-        $(document).on('puzzle:scramble', () => {
-            this.setState({
-                isTiming: false,
-                start: null,
-                label: '0:0.0',
-            });
+        $(document).on('puzzle:scramble', function() {
+            isTiming(false);
+            start(null);
+            label('0:0.0');
         });
 
-        $(document).on('puzzle:solved', () => {
-            this.setState({
-                isTiming: false,
-            });
+        $(document).on('puzzle:solved', function() {
+            isTiming(false);
         });
+
+		// Formats a number to be 2 digits.
+		var _formatTwoDigits = function(num) {
+			num = Math.floor(num);
+			if (num < 10) {
+				return '0' + num;
+			}
+
+			return String(num);
+		};
+
+		var updateTime = function() {
+			if (!isTiming()) {
+				return;
+			}
+
+			// Subtraction using JavaScript's Date object just gives us a time in
+			// milliseconds, so we have to do some manual math here.
+			let elapsed = new Date() - start();
+			let milliSeconds = _formatTwoDigits((elapsed % 1000) / 10);
+			let seconds = _formatTwoDigits((elapsed / 1000) % 60);
+			let minutes = Math.floor(elapsed / 1000 / 60);
+			let newLabel = `${minutes}:${seconds}.${milliSeconds}`;
+
+			label(newLabel);
+			m.redraw(); // TODO Avoid manual redrawing.
+		};
 
         // If we used 100 ms exactly the 2nd millisecond digit on the clock
         // would never change. Instead we use an interval slightly under 100 ms.
-        setInterval(this.updateTime.bind(this), 93);
-    }
+        setInterval(updateTime, 93);
 
-    // Formats a number to be 2 digits.
-    _formatTwoDigits(num) {
-        num = Math.floor(num);
-        if (num < 10) {
-            return '0' + num;
-        }
+		return {
+			isTiming: isTiming,
+			start: start,
+			label: label
+		};
+    },
 
-        return String(num);
-    }
-
-    updateTime() {
-        if (!this.state.isTiming) {
-            return;
-        }
-
-        // Subtraction using JavaScript's Date object just gives us a time in
-        // milliseconds, so we have to do some manual math here.
-        let elapsed = new Date() - this.state.start;
-        let milliSeconds = this._formatTwoDigits((elapsed % 1000) / 10);
-        let seconds = this._formatTwoDigits((elapsed / 1000) % 60);
-        let minutes = Math.floor(elapsed / 1000 / 60);
-        let label = `${minutes}:${seconds}.${milliSeconds}`;
-
-        this.setState({label: label});
-    }
-
-    render() {
-        return (
-            <h3>Time: {this.state.label}</h3>
-        );
+    view: function(ctrl) {
+        return m('h3', 'Time: ' + ctrl.label());
     }
 }
 
-class Controls extends React.Component {
-    render() {
-        return (
-            <div>
-                <button
-                    onClick={this.props.puzzle.scramble.bind(this.props.puzzle)}
-                    className='btn btn-lg btn-wide btn-primary'
-                >
-                    Scramble
-                </button>
-                <TimeCounter />
-                <MoveCounter />
-            </div>
-        );
+var Controls = {
+	controller: function(args) {
+		return {
+			puzzle: args.puzzle
+		};
+	},
+
+    view: function(ctrl) {
+        return m('div', [
+			m('button', {
+				class: 'btn btn-lg btn-wide btn-primary',
+				onclick: ctrl.puzzle.scramble.bind(ctrl.puzzle)
+			}, 'Scramble'),
+			m.component(TimeCounter),
+			m.component(MoveCounter)
+		]);
     }
-}
+};
 
 
 // Create puzzle instance.
@@ -531,7 +520,7 @@ let puzzle = new Puzzle({
 });
 
 // Render controls.
-ReactDOM.render(
-    <Controls puzzle={puzzle}/>,
-    document.getElementById('controls')
+m.mount(
+    document.getElementById('controls'),
+    m.component(Controls, {puzzle: puzzle})
 );
