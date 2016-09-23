@@ -1,20 +1,15 @@
 {
-  "name": "npuzzle",
-  "version": "1.0.0",
-  "main": "index.js",
-  "author": "Daniel Reiter",
-  "devDependencies": {
-    "babel-core": "^6.13.2",
-    "babel-loader": "^6.2.4",
-    "babel-preset-es2015": "^6.13.2",
-    "babel-preset-react": "^6.11.1",
-    "bower": "^1.7.9",
-    "webpack": "^1.13.1"
-  },
-  "dependencies": {
-    "jquery": "^3.1.0",
-    "move-js": "^0.5.0",
-    "react": "^15.3.0",
-    "react-dom": "^15.3.0"
-  }
+	"name": "npuzzle",
+	"version": "1.0.0",
+	"main": "index.js",
+	"author": "Daniel Reiter",
+	"devDependencies": {
+		"browserify": "^13.1.0",
+		"watchify": "^3.7.0"
+	},
+	"dependencies": {},
+	"scripts": {
+		"build": "browserify main.js -o index.js",
+		"dev": "watchify main.js -o index.js"
+	}
 }
