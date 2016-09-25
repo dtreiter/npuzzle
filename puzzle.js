@@ -1,3 +1,5 @@
+let Solver = require('./Solver');
+
 let Puzzle = (() => {
 	'use strict';
 
@@ -324,6 +326,30 @@ let Puzzle = (() => {
 			}
 
 			return true;
+		}
+
+		/*
+		 * Dumps the current puzzle tile state as a matrix of numbers.
+		 */
+		_dumpState() {
+			let state = [];
+			for (let row = 0; row < this.size; row++) {
+				state.push([]);
+				for (let col = 0; col < this.size; col++) {
+					state[row].push(this.tiles[row][col].number);
+				}
+			}
+
+			return state;
+		}
+
+		/*
+		 * Finds a solution using the `Solver` and executes the solution on the
+		 * puzzle.
+		 */
+		solve() {
+			let path = Solver.solve(this._dumpState());
+			this.moveSequence.bind(this, path)();
 		}
 
 		_generateEmptyMatrix(size) {
