@@ -301,6 +301,18 @@ let Puzzle = (() => {
 			}
 		}
 
+		/*
+		 * Executes a sequence of moves provided as an array of
+		 * `{row: row, col: col}` objects.
+		 */
+		moveSequence(sequence) {
+				let pos = sequence.shift();
+				if (pos) {
+					this.move(pos.row, pos.col);
+					setTimeout(this.moveSequence.bind(this, sequence), 3 * TimeConstants.SLIDE);
+				}
+		}
+
 		isSolved() {
 			for (let row = 0; row < this.size; row++) {
 				for (let col = 0; col < this.size; col++) {
