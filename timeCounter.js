@@ -2,7 +2,8 @@ var TimeCounter = {
 	controller: function() {
 		var isTiming = m.prop(false);
 		var start = m.prop(null);
-		var label = m.prop('0:0.0');
+		var defaultLabel = '0:00.00';
+		var label = m.prop(defaultLabel);
 
 		$(document).on('puzzle:move', function() {
 			if (!isTiming()) {
@@ -14,7 +15,7 @@ var TimeCounter = {
 		$(document).on('puzzle:scramble', function() {
 			isTiming(false);
 			start(null);
-			label('0:0.0');
+			label(defaultLabel);
 		});
 
 		$(document).on('puzzle:solved', function() {
