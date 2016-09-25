@@ -3,6 +3,7 @@ var MoveCounter = {
 		var count = m.prop(0);
 		$(document).on('puzzle:move', function() {
 			count(count() + 1);
+			m.redraw(); // TODO
 		});
 
 		$(document).on('puzzle:scramble', function() {
