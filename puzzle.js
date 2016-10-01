@@ -142,6 +142,7 @@ let Puzzle = (() => {
 				SOLVED: 0,
 				SCRAMBLING: 1,
 				SCRAMBLED: 2,
+				SOLVING: 3,
 			};
 			this._state = this._States.SOLVED;
 
@@ -154,7 +155,9 @@ let Puzzle = (() => {
 
 			// Listen for click events on tiles.
 			$(document).on('puzzle:tile:click', (e, pos) => {
-				this.move(pos.row, pos.col);
+				if (this._state === this._States.SCRAMBLED) {
+					this.move(pos.row, pos.col);
+				}
 			});
 
 			// If a state was provided, set the puzzle to that. Otherwise,
@@ -305,7 +308,9 @@ let Puzzle = (() => {
 				this._moveTiles({row: row, col: col}, emptyTile);
 				$(document).triggerHandler('puzzle:move');
 
-				if (this._state === this._States.SCRAMBLED && this.isSolved()) {
+				if ((this._state === this._States.SCRAMBLED
+						|| this._state === this._States.SOLVING)
+						&& this.isSolved()) {
 					this._state = this._States.SOLVED;
 					$(document).triggerHandler('puzzle:solved');
 					this._animateSolved();
@@ -402,6 +407,11 @@ let Puzzle = (() => {
 		 * puzzle.
 		 */
 		solve() {
+			if (this._state !== this._States.SCRAMBLED) {
+				return;
+			}
+
+			this._state = this._States.SOLVING;
 			let path = Solver.solve(this._dumpState());
 			this.moveSequence.bind(this, path)();
 		}
