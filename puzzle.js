@@ -133,6 +133,7 @@ let Puzzle = (() => {
 		constructor(opts) {
 			this.$container = opts.$container;
 			this.size = opts.size;
+			this.initialState = opts.initialState;
 
 			this.width = this.$container.width();
 			this.height = this.width;
@@ -156,7 +157,16 @@ let Puzzle = (() => {
 				this.move(pos.row, pos.col);
 			});
 
-			setTimeout(this.scramble.bind(this), TimeConstants.SCRAMBLE);
+			// If a state was provided, set the puzzle to that. Otherwise,
+			// scramble it.
+			if (this.initialState) {
+				setTimeout(
+					this._setInitialState.bind(this, this.initialState),
+					TimeConstants.SCRAMBLE
+				);
+			} else {
+				setTimeout(this.scramble.bind(this), TimeConstants.SCRAMBLE);
+			}
 		}
 
 		_generateTiles() {
@@ -326,6 +336,50 @@ let Puzzle = (() => {
 			}
 
 			return true;
+		}
+
+		/*
+		 * Takes a state represented as an array of numbers and puts the puzzle
+		 * in that state. Depends on the puzzle being in the solved state.
+		 */
+		_setInitialState(state) {
+			if (state.length !== this.size * this.size) {
+				throw new Error('Provided state is invalid!');
+			}
+
+			// Make a mapping of number labels to their location in the provided
+			// state. This prevents repeatedly searching the provided state
+			// array further down.
+			let labelToState = {};
+			state.forEach((num, i) => {
+				// Ensure valid / non-duplicate numbers are provided.
+				num = Number(num);
+				if (num <= 0
+						|| num > this.size * this.size
+						|| isNaN(num)
+						|| num in labelToState) {
+					throw new Error('Provided state is invalid!');
+				}
+
+				labelToState[num] = i;
+			});
+
+			let newTiles = this._generateEmptyMatrix(this.size);
+			for (let row = 0; row < this.size; row++) {
+				for (let col = 0; col < this.size; col++) {
+					let curTile = this.tiles[row][col];
+					let curIndex = col + this.size * row + 1;
+					let stateIndex = labelToState[curIndex];
+					let stateRow = Math.floor(stateIndex / this.size);
+					let stateCol = stateIndex % this.size;
+
+					newTiles[stateRow][stateCol] = curTile;
+					curTile.move(stateRow, stateCol);
+				}
+			}
+
+			this.tiles = newTiles;
+			this._state = this._States.SCRAMBLED;
 		}
 
 		/*

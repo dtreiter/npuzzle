@@ -1,13 +1,14 @@
-var Puzzle = require('./Puzzle');
-var Controls = require('./Controls');
+let Puzzle = require('./Puzzle');
+let Controls = require('./Controls');
 
-var App = {
+let App = {
 	controller: function() {
 		// TODO Make puzzle a mithril component.
 		// Create puzzle instance.
 		let puzzle = new Puzzle({
 			$container: $('#puzzle'),
 			size: 3,
+			initialState: m.route.param('state').split(',')
 		});
 
 		return {
