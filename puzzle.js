@@ -456,6 +456,12 @@ let Puzzle = (() => {
 		 * `C * numTiles` moves, where `C` is large.
 		 */
 		scramble() {
+			// Prevent scrambling while the puzzle is in states like SOLVING.
+			if (this._state !== this._States.SOLVED
+					&& this._state !== this._States.SCRAMBLED) {
+				return;
+			}
+
 			this._state = this._States.SCRAMBLING;
 			this._hideEmptyTile();
 
