@@ -5,10 +5,22 @@ let App = {
 	controller: function() {
 		// TODO Make puzzle a mithril component.
 		// Create puzzle instance.
+		let size = Number(m.route.param('size'));
+		if (size < 3 || isNaN(size)) {
+			size = 3;
+		} else if (size > 5) {
+			size = 5;
+		}
+
+		let initialState = m.route.param('state');
+		if (initialState) {
+			initialState = initialState.split(',');
+		}
+
 		let puzzle = new Puzzle({
 			$container: $('#puzzle'),
-			size: 3,
-			initialState: m.route.param('state').split(',')
+			size: size,
+			initialState: initialState
 		});
 
 		return {
