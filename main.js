@@ -1,14 +1,6 @@
-var Puzzle = require('./Puzzle');
-var Controls = require('./Controls');
-
-// Create puzzle instance.
-let puzzle = new Puzzle({
-	$container: $('#puzzle'),
-	size: 3,
-});
+var App = require('./App');
 
 // Render controls.
-m.mount(
-	document.getElementById('controls'),
-	m.component(Controls, {puzzle: puzzle})
-);
+m.route(document.getElementById('controls'), '/', {
+	'/': App
+});
