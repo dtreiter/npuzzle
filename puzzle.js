@@ -134,6 +134,7 @@ let Puzzle = (() => {
 			this.$container = opts.$container;
 			this.size = opts.size;
 			this.initialState = opts.initialState;
+			this.blind = Boolean(opts.blind);
 
 			this.width = this.$container.width();
 			this.height = this.width;
@@ -402,6 +403,14 @@ let Puzzle = (() => {
 			return state;
 		}
 
+		_hideLabels() {
+			$('div.tile').css('color', 'rgba(0,0,0,0)');
+		}
+
+		_showLabels() {
+			$('div.tile').css('color', 'rgba(0,0,0,1)');
+		}
+
 		/*
 		 * Finds a solution using the `Solver` and executes the solution on the
 		 * puzzle.
@@ -456,6 +465,11 @@ let Puzzle = (() => {
 		 * `C * numTiles` moves, where `C` is large.
 		 */
 		scramble() {
+			// Hide labels if blind-mode is enabled.
+			if (this.blind) {
+				this._hideLabels();
+			}
+
 			// Prevent scrambling while the puzzle is in states like SOLVING.
 			if (this._state !== this._States.SOLVED
 					&& this._state !== this._States.SCRAMBLED) {
@@ -501,6 +515,10 @@ let Puzzle = (() => {
 		}
 
 		_animateSolved() {
+			if (this.blind) {
+				this._showLabels();
+			}
+
 			for (let row of this.tiles) {
 				for (let tile of row) {
 					tile.animateSolved();

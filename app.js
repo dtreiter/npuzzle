@@ -17,9 +17,12 @@ let App = {
 			initialState = initialState.split(',');
 		}
 
+		let blind = Boolean(m.route.param('blind'));
+
 		let puzzle = new Puzzle({
 			$container: $('#puzzle'),
 			size: size,
+			blind: blind,
 			initialState: initialState
 		});
 
