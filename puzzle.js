@@ -157,6 +157,11 @@ let Puzzle = (() => {
 			// Listen for click events on tiles.
 			$(document).on('puzzle:tile:click', (e, pos) => {
 				if (this._state === this._States.SCRAMBLED) {
+					// Hide labels if blind-mode is enabled.
+					if (this.blind) {
+						this._hideLabels();
+					}
+
 					this.move(pos.row, pos.col);
 				}
 			});
@@ -465,9 +470,8 @@ let Puzzle = (() => {
 		 * `C * numTiles` moves, where `C` is large.
 		 */
 		scramble() {
-			// Hide labels if blind-mode is enabled.
 			if (this.blind) {
-				this._hideLabels();
+				this._showLabels();
 			}
 
 			// Prevent scrambling while the puzzle is in states like SOLVING.
