@@ -1,7 +1,7 @@
-let Puzzle = require('./Puzzle');
-let Controls = require('./Controls');
+import {Puzzle} from './puzzle.js';
+import {Controls} from './controls.js';
 
-let App = {
+export const App = {
 	controller: function() {
 		// TODO Make puzzle a mithril component.
 		// Create puzzle instance.
@@ -35,5 +35,3 @@ let App = {
 		return m.component(Controls, {puzzle: ctrl.puzzle})
 	}
 };
-
-module.exports = App;

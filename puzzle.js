@@ -1,6 +1,6 @@
-let Solver = require('./Solver');
+import {solve} from './solver.js';
 
-let Puzzle = (() => {
+export const Puzzle = (() => {
 	'use strict';
 
 	let TimeConstants = {
@@ -417,7 +417,7 @@ let Puzzle = (() => {
 		}
 
 		/*
-		 * Finds a solution using the `Solver` and executes the solution on the
+		 * Finds a solution using `solve` and executes the solution on the
 		 * puzzle.
 		 */
 		solve() {
@@ -426,7 +426,7 @@ let Puzzle = (() => {
 			}
 
 			this._state = this._States.SOLVING;
-			let path = Solver.solve(this._dumpState());
+			let path = solve(this._dumpState());
 			this.moveSequence.bind(this, path)();
 		}
 
@@ -533,5 +533,3 @@ let Puzzle = (() => {
 
 	return Puzzle;
 })();
-
-module.exports = Puzzle;

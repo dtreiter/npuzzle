@@ -1,4 +1,4 @@
-var MoveCounter = {
+export const MoveCounter = {
 	controller: function() {
 		var count = m.prop(0);
 		$(document).on('puzzle:move', function() {
@@ -19,5 +19,3 @@ var MoveCounter = {
 		return m('h3', 'Moves: ' + ctrl.count());
 	}
 };
-
-module.exports = MoveCounter;

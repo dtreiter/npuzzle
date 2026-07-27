@@ -1,4 +1,4 @@
-var TimeCounter = {
+export const TimeCounter = {
 	controller: function() {
 		var isTiming = m.prop(false);
 		var start = m.prop(null);
@@ -64,5 +64,3 @@ var TimeCounter = {
 		return m('h3', 'Time: ' + ctrl.label());
 	}
 };
-
-module.exports = TimeCounter;

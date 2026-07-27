@@ -108,10 +108,6 @@ let bfs = (initialState) => {
 	throw new Error('Unsolvable puzzle state!');
 };
 
-let solve = function(state) {
+export function solve(state) {
 	return bfs(state);
-};
-
-module.exports = {
-	solve: solve
 };

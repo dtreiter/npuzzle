@@ -1,7 +1,7 @@
-var MoveCounter = require('./MoveCounter');
-var TimeCounter = require('./TimeCounter');
+import {MoveCounter} from './moveCounter.js';
+import {TimeCounter} from './timeCounter.js';
 
-var Controls = {
+export const Controls = {
 	controller: function(args) {
 		return {
 			puzzle: args.puzzle
@@ -23,5 +23,3 @@ var Controls = {
 		]);
 	}
 };
-
-module.exports = Controls;
