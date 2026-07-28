@@ -4,8 +4,8 @@ export const Puzzle = (() => {
 	'use strict';
 
 	let TimeConstants = {
-		SLIDE: 80,
-		FADE: 800,
+		SLIDE: 50,
+		FADE: 500,
 		WAIT: 300,
 		SCRAMBLE: 1200,
 		SHAKE: 200,
@@ -33,11 +33,18 @@ export const Puzzle = (() => {
 
 		move(row, col) {
 			let pos = this._getRectPosition(row, col);
-			move(this.$el[0])
-				.set('left', pos.x)
-				.set('top', pos.y)
-				.duration(TimeConstants.SLIDE)
-				.end();
+			this.$el[0].animate(
+			  [
+          {
+            left: pos.x,
+				    top: pos.y,
+          }
+        ],
+        {
+			  	duration: TimeConstants.SLIDE,
+			  	fill: 'forwards',
+        }
+      );
 
 			this.row = row;
 			this.col = col;
@@ -48,49 +55,67 @@ export const Puzzle = (() => {
 		}
 
 		hide() {
-			move(this.$el[0])
-				.set('opacity', 0)
-				.scale(0.8)
-				.duration(TimeConstants.FADE)
-				.end();
+			this.$el[0].animate(
+			  [
+          {
+            opacity: 0,
+			  	  scale: 0.8,
+          }
+			  ],
+			  {
+				  duration: TimeConstants.FADE,
+				  fill: 'forwards',
+        }
+			);
 		}
 
 		/*
 		 * Visually shakes the tile.
 		 */
-		animateSolved() {
-			let rotation = 3; // Degrees
+		async animateSolved() {
+			const rotation = 3; // Degrees
+			const el = this.$el[0];
 
-			let straighten = () => {
-				move(this.$el[0])
-					.rotate(0)
-					.duration(TimeConstants.SHAKE)
-					.end();
+			const straighten = () => {
+				return el.animate(
+				  [{transform: 'rotate(0deg)'}],
+          {
+            duration: TimeConstants.SHAKE,
+            fill: 'forwards',
+          }
+        ).finished;
 			};
 
-			let shake = (numTimes) => {
-				move(this.$el[0])
-					.rotate(rotation)
-					.scale(1)
-					.set('opacity', 1.0)
-					.duration(TimeConstants.SHAKE)
-					.then()
-						.rotate(-2 * rotation)
-						.duration(TimeConstants.SHAKE)
-						.pop()
-					.end(() => {
-						setTimeout(() => {
-							if (numTimes > 0) {
-								shake(numTimes - 1);
-							}
-							else {
-								straighten();
-							}
-						}, TimeConstants.SHAKE);
-					});
+			const shake = async () => {
+				await el.animate([
+            {
+              transform: `rotate(${rotation}deg)`,
+				    	scale: 1,
+				    	opacity: 1.0,
+            }
+          ],
+          {
+					  duration: TimeConstants.SHAKE,
+					  fill: 'forwards',
+          }
+        ).finished;
+
+				await el.animate([
+            {
+              transform: `rotate(${-rotation}deg)`,
+            }
+          ],
+          {
+					  duration: TimeConstants.SHAKE,
+					  fill: 'forwards',
+          }
+        ).finished;
 			}
 
-			shake(3);
+			await shake();
+			await shake();
+			await shake();
+			await straighten();
 		}
 
 		_createTileDiv() {
