@@ -11,11 +11,11 @@ export const Controls = {
   view: function(ctrl) {
     return m('div', [
       m('button', {
-        class: 'btn btn-lg btn-wide btn-primary',
+        class: 'button primary',
         onclick: ctrl.puzzle.scramble.bind(ctrl.puzzle)
       }, 'Scramble'),
       m('button', {
-        class: 'btn btn-lg btn-wide btn-warning',
+        class: 'button secondary',
         onclick: ctrl.puzzle.solve.bind(ctrl.puzzle)
       }, 'Solve'),
       m.component(TimeCounter),
