@@ -1,21 +1,21 @@
 export const MoveCounter = {
-	controller: function() {
-		var count = m.prop(0);
-		$(document).on('puzzle:move', function() {
-			count(count() + 1);
-			m.redraw(); // TODO
-		});
+  controller: function() {
+    var count = m.prop(0);
+    $(document).on('puzzle:move', function() {
+      count(count() + 1);
+      m.redraw(); // TODO
+    });
 
-		$(document).on('puzzle:scramble', function() {
-			count(0);
-		});
+    $(document).on('puzzle:scramble', function() {
+      count(0);
+    });
 
-		return {
-			count: count
-		};
-	},
+    return {
+      count: count
+    };
+  },
 
-	view: function(ctrl) {
-		return m('h3', 'Moves: ' + ctrl.count());
-	}
+  view: function(ctrl) {
+    return m('h3', 'Moves: ' + ctrl.count());
+  }
 };

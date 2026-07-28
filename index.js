@@ -5,5 +5,5 @@ m.route.mode = 'hash';
 
 // Render controls.
 m.route(document.getElementById('controls'), '/', {
-	'/': App
+  '/': App
 });

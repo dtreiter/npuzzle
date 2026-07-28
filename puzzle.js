@@ -1,560 +1,560 @@
 import {solve} from './solver.js';
 
 export const Puzzle = (() => {
-	'use strict';
+  'use strict';
 
-	let TimeConstants = {
-		SLIDE: 50,
-		FADE: 500,
-		WAIT: 300,
-		SCRAMBLE: 1200,
-		SHAKE: 200,
-	};
+  let TimeConstants = {
+    SLIDE: 50,
+    FADE: 500,
+    WAIT: 300,
+    SCRAMBLE: 1200,
+    SHAKE: 200,
+  };
 
-	class Tile {
-		constructor(opts) {
-			this.$container = opts.$container;
-			this.row = opts.row;
-			this.col = opts.col;
-			this.size = opts.size;
-			this.number = opts.number;
-			this.visible = opts.visible;
+  class Tile {
+    constructor(opts) {
+      this.$container = opts.$container;
+      this.row = opts.row;
+      this.col = opts.col;
+      this.size = opts.size;
+      this.number = opts.number;
+      this.visible = opts.visible;
 
-			this.$el = this._createTileDiv();
-			this.$container.append(this.$el);
-			this._setupClickHandler();
+      this.$el = this._createTileDiv();
+      this.$container.append(this.$el);
+      this._setupClickHandler();
 
-			if (!this.visible) {
-				setTimeout(() => {
-					this.hide();
-				}, TimeConstants.WAIT);
-			}
-		}
+      if (!this.visible) {
+        setTimeout(() => {
+          this.hide();
+        }, TimeConstants.WAIT);
+      }
+    }
 
-		move(row, col) {
-			let pos = this._getRectPosition(row, col);
-			this.$el[0].animate(
-			  [
+    move(row, col) {
+      let pos = this._getRectPosition(row, col);
+      this.$el[0].animate(
+        [
           {
             left: pos.x,
-				    top: pos.y,
+            top: pos.y,
           }
         ],
         {
-			  	duration: TimeConstants.SLIDE,
-			  	fill: 'forwards',
+          duration: TimeConstants.SLIDE,
+          fill: 'forwards',
         }
       );
 
-			this.row = row;
-			this.col = col;
-		}
+      this.row = row;
+      this.col = col;
+    }
 
-		isEmpty() {
-			return !this.visible;
-		}
+    isEmpty() {
+      return !this.visible;
+    }
 
-		hide() {
-			this.$el[0].animate(
-			  [
+    hide() {
+      this.$el[0].animate(
+        [
           {
             opacity: 0,
-			  	  scale: 0.8,
+            scale: 0.8,
           }
-			  ],
-			  {
-				  duration: TimeConstants.FADE,
-				  fill: 'forwards',
+        ],
+        {
+          duration: TimeConstants.FADE,
+          fill: 'forwards',
         }
-			);
-		}
+      );
+    }
 
-		/*
-		 * Visually shakes the tile.
-		 */
-		async animateSolved() {
-			const rotation = 3; // Degrees
-			const el = this.$el[0];
+    /*
+     * Visually shakes the tile.
+     */
+    async animateSolved() {
+      const rotation = 3; // Degrees
+      const el = this.$el[0];
 
-			const straighten = () => {
-				return el.animate(
-				  [{transform: 'rotate(0deg)'}],
+      const straighten = () => {
+        return el.animate(
+          [{transform: 'rotate(0deg)'}],
           {
             duration: TimeConstants.SHAKE,
             fill: 'forwards',
           }
         ).finished;
-			};
+      };
 
-			const shake = async () => {
-				await el.animate([
+      const shake = async () => {
+        await el.animate([
             {
               transform: `rotate(${rotation}deg)`,
-				    	scale: 1,
-				    	opacity: 1.0,
+              scale: 1,
+              opacity: 1.0,
             }
           ],
           {
-					  duration: TimeConstants.SHAKE,
-					  fill: 'forwards',
+            duration: TimeConstants.SHAKE,
+            fill: 'forwards',
           }
         ).finished;
 
-				await el.animate([
+        await el.animate([
             {
               transform: `rotate(${-rotation}deg)`,
             }
           ],
           {
-					  duration: TimeConstants.SHAKE,
-					  fill: 'forwards',
+            duration: TimeConstants.SHAKE,
+            fill: 'forwards',
           }
         ).finished;
-			}
+      }
 
-			await shake();
-			await shake();
-			await shake();
-			await straighten();
-		}
+      await shake();
+      await shake();
+      await shake();
+      await straighten();
+    }
 
-		_createTileDiv() {
-			let pos = this._getRectPosition(this.row, this.col);
-			return $('<div>')
-				.html(String(this.number))
-				.addClass('tile')
-				.css({
-					'width': String(this.size) + 'px',
-					'height': String(this.size) + 'px',
-					'line-height': String(this.size) + 'px',
-					'left': pos.x,
-					'top': pos.y,
-				});
-		}
+    _createTileDiv() {
+      let pos = this._getRectPosition(this.row, this.col);
+      return $('<div>')
+        .html(String(this.number))
+        .addClass('tile')
+        .css({
+          'width': String(this.size) + 'px',
+          'height': String(this.size) + 'px',
+          'line-height': String(this.size) + 'px',
+          'left': pos.x,
+          'top': pos.y,
+        });
+    }
 
-		_setupClickHandler() {
-			this.$el.on('touchstart click', (e) => {
-				$(document).triggerHandler('puzzle:tile:click', {
-					row: this.row,
-					col: this.col
-				});
+    _setupClickHandler() {
+      this.$el.on('touchstart click', (e) => {
+        $(document).triggerHandler('puzzle:tile:click', {
+          row: this.row,
+          col: this.col
+        });
 
-				// If the `touchstart` event is triggered, prevent the `click`
-				// event from firing.
-				e.preventDefault();
-			});
-		}
+        // If the `touchstart` event is triggered, prevent the `click`
+        // event from firing.
+        e.preventDefault();
+      });
+    }
 
-		_getRectPosition(row, col) {
-			return {
-				x: this.size * col,
-				y: this.size * row,
-			}
-		}
-	}
+    _getRectPosition(row, col) {
+      return {
+        x: this.size * col,
+        y: this.size * row,
+      }
+    }
+  }
 
 
-	class Puzzle {
-		constructor(opts) {
-			this.$container = opts.$container;
-			this.size = opts.size;
-			this.initialState = opts.initialState;
-			this.blind = Boolean(opts.blind);
+  class Puzzle {
+    constructor(opts) {
+      this.$container = opts.$container;
+      this.size = opts.size;
+      this.initialState = opts.initialState;
+      this.blind = Boolean(opts.blind);
 
-			this.width = this.$container.width();
-			this.height = this.width;
+      this.width = this.$container.width();
+      this.height = this.width;
 
-			this._States = {
-				SOLVED: 0,
-				SCRAMBLING: 1,
-				SCRAMBLED: 2,
-				SOLVING: 3,
-			};
-			this._state = this._States.SOLVED;
+      this._States = {
+        SOLVED: 0,
+        SCRAMBLING: 1,
+        SCRAMBLED: 2,
+        SOLVING: 3,
+      };
+      this._state = this._States.SOLVED;
 
-			// Due to using absolute css positioning, the #puzzle container div
-			// cannot know it's height -- set it manually here.
-			this.$container.height(this.height);
+      // Due to using absolute css positioning, the #puzzle container div
+      // cannot know it's height -- set it manually here.
+      this.$container.height(this.height);
 
-			this.tiles = [];
-			this._generateTiles();
+      this.tiles = [];
+      this._generateTiles();
 
-			// Listen for click events on tiles.
-			$(document).on('puzzle:tile:click', (e, pos) => {
-				if (this._state === this._States.SCRAMBLED) {
-					// Hide labels if blind-mode is enabled.
-					if (this.blind) {
-						this._hideLabels();
-					}
+      // Listen for click events on tiles.
+      $(document).on('puzzle:tile:click', (e, pos) => {
+        if (this._state === this._States.SCRAMBLED) {
+          // Hide labels if blind-mode is enabled.
+          if (this.blind) {
+            this._hideLabels();
+          }
 
-					this.move(pos.row, pos.col);
-				}
-			});
+          this.move(pos.row, pos.col);
+        }
+      });
 
-			// If a state was provided, set the puzzle to that. Otherwise,
-			// scramble it.
-			if (this.initialState) {
-				setTimeout(
-					this._setInitialState.bind(this, this.initialState),
-					TimeConstants.SCRAMBLE
-				);
-			} else {
-				setTimeout(this.scramble.bind(this), TimeConstants.SCRAMBLE);
-			}
-		}
+      // If a state was provided, set the puzzle to that. Otherwise,
+      // scramble it.
+      if (this.initialState) {
+        setTimeout(
+          this._setInitialState.bind(this, this.initialState),
+          TimeConstants.SCRAMBLE
+        );
+      } else {
+        setTimeout(this.scramble.bind(this), TimeConstants.SCRAMBLE);
+      }
+    }
 
-		_generateTiles() {
-			let tileSize = this.width / this.size;
-			for (let row = 0; row < this.size; row++) {
-				this.tiles.push([]);
-				for (let col = 0; col < this.size; col++) {
-					let num = this.size * row + col + 1;
+    _generateTiles() {
+      let tileSize = this.width / this.size;
+      for (let row = 0; row < this.size; row++) {
+        this.tiles.push([]);
+        for (let col = 0; col < this.size; col++) {
+          let num = this.size * row + col + 1;
 
-					let visible = true;
-					if (num === this.size * this.size) {
-						// The empty space is represented as a hidden tile for simplicity.
-						visible = false;
-					}
+          let visible = true;
+          if (num === this.size * this.size) {
+            // The empty space is represented as a hidden tile for simplicity.
+            visible = false;
+          }
 
-					this.tiles[row].push(new Tile({
-						$container: this.$container,
-						visible: visible,
-						size: tileSize,
-						row: row,
-						col: col,
-						number: num,
-					}));
-				}
-			}
-		}
+          this.tiles[row].push(new Tile({
+            $container: this.$container,
+            visible: visible,
+            size: tileSize,
+            row: row,
+            col: col,
+            number: num,
+          }));
+        }
+      }
+    }
 
-		_findEmptyTile() {
-			for (let row = 0; row < this.size; row++) {
-				for (let col = 0; col < this.size; col++) {
-					if (this.tiles[row][col].isEmpty()) {
-						return {
-							row: row,
-							col: col,
-						};
-					}
-				}
-			}
-		}
+    _findEmptyTile() {
+      for (let row = 0; row < this.size; row++) {
+        for (let col = 0; col < this.size; col++) {
+          if (this.tiles[row][col].isEmpty()) {
+            return {
+              row: row,
+              col: col,
+            };
+          }
+        }
+      }
+    }
 
-		/*
-		 * Determines if the empty square is in the same row / col as the provided
-		 * (row, col). Returns the empty square's location if so.
-		 *
-		 * The basic algorithm is to start at (row, col) and step outward in all 4
-		 * directions looking for the empty tile.
-		 */
-		_findEmptyTileSameRowCol(row, col) {
-			// The max distance in any direction to the end of the puzzle.
-			let maxDistance = Math.max(row, col, this.size - row, this.size - col);
+    /*
+     * Determines if the empty square is in the same row / col as the provided
+     * (row, col). Returns the empty square's location if so.
+     *
+     * The basic algorithm is to start at (row, col) and step outward in all 4
+     * directions looking for the empty tile.
+     */
+    _findEmptyTileSameRowCol(row, col) {
+      // The max distance in any direction to the end of the puzzle.
+      let maxDistance = Math.max(row, col, this.size - row, this.size - col);
 
-			for (let i = 1; i <= maxDistance; i++) {
-				if (this._isEmpty(row - i, col)) {
-					return {
-						row: row - i,
-						col: col,
-					}
-				}
-				else if (this._isEmpty(row + i, col)) {
-					return {
-						row: row + i,
-						col: col,
-					}
-				}
-				else if (this._isEmpty(row, col - i)) {
-					return {
-						row: row,
-						col: col - i,
-					}
-				}
-				else if (this._isEmpty(row, col + i)) {
-					return {
-						row: row,
-						col: col + i,
-					}
-				}
-			}
+      for (let i = 1; i <= maxDistance; i++) {
+        if (this._isEmpty(row - i, col)) {
+          return {
+            row: row - i,
+            col: col,
+          }
+        }
+        else if (this._isEmpty(row + i, col)) {
+          return {
+            row: row + i,
+            col: col,
+          }
+        }
+        else if (this._isEmpty(row, col - i)) {
+          return {
+            row: row,
+            col: col - i,
+          }
+        }
+        else if (this._isEmpty(row, col + i)) {
+          return {
+            row: row,
+            col: col + i,
+          }
+        }
+      }
 
-			return null;
-		}
+      return null;
+    }
 
-		/*
-		 * Determines if the tile at (row, col) is the empty tile.
-		 */
-		_isEmpty(row, col) {
-			// Check if out of bounds.
-			if (row < 0 || row >= this.size || col < 0 || col >= this.size) {
-				return false;
-			}
+    /*
+     * Determines if the tile at (row, col) is the empty tile.
+     */
+    _isEmpty(row, col) {
+      // Check if out of bounds.
+      if (row < 0 || row >= this.size || col < 0 || col >= this.size) {
+        return false;
+      }
 
-			return this.tiles[row][col].isEmpty();
-		}
+      return this.tiles[row][col].isEmpty();
+    }
 
-		/*
-		 * Moves a row / column of tiles in the interval (start, end).
-		 *
-		 * The idea is to start at the end (the empty square) and move each tile
-		 * preceding it until reaching start.
-		 */
-		_moveTiles(start, end) {
-			let emptyTile = this.tiles[end.row][end.col];
+    /*
+     * Moves a row / column of tiles in the interval (start, end).
+     *
+     * The idea is to start at the end (the empty square) and move each tile
+     * preceding it until reaching start.
+     */
+    _moveTiles(start, end) {
+      let emptyTile = this.tiles[end.row][end.col];
 
-			// Create a normalized direction vector.
-			let direction = {
-				r: start.row - end.row,
-				c: start.col - end.col,
-			};
-			// Normalize
-			if (direction.r != 0) direction.r /= Math.abs(direction.r);
-			if (direction.c != 0) direction.c /= Math.abs(direction.c);
+      // Create a normalized direction vector.
+      let direction = {
+        r: start.row - end.row,
+        c: start.col - end.col,
+      };
+      // Normalize
+      if (direction.r != 0) direction.r /= Math.abs(direction.r);
+      if (direction.c != 0) direction.c /= Math.abs(direction.c);
 
-			let row = end.row;
-			let col = end.col;
-			while (row != start.row || col != start.col) {
-				let nextRow = row + direction.r;
-				let nextCol = col + direction.c;
-				this.tiles[row][col] = this.tiles[nextRow][nextCol];
-				this.tiles[row][col].move(row, col);
+      let row = end.row;
+      let col = end.col;
+      while (row != start.row || col != start.col) {
+        let nextRow = row + direction.r;
+        let nextCol = col + direction.c;
+        this.tiles[row][col] = this.tiles[nextRow][nextCol];
+        this.tiles[row][col].move(row, col);
 
-				row = nextRow;
-				col = nextCol;
-			}
+        row = nextRow;
+        col = nextCol;
+      }
 
-			this.tiles[row][col] = emptyTile;
-			emptyTile.move(row, col);
-		}
+      this.tiles[row][col] = emptyTile;
+      emptyTile.move(row, col);
+    }
 
-		move(row, col) {
-			// Don't allow moving when in the solved state.
-			if (this._state === this._States.SOLVED) {
-				return;
-			}
+    move(row, col) {
+      // Don't allow moving when in the solved state.
+      if (this._state === this._States.SOLVED) {
+        return;
+      }
 
-			let emptyTile = this._findEmptyTileSameRowCol(row, col);
-			if (emptyTile !== null) {
-				this._moveTiles({row: row, col: col}, emptyTile);
-				$(document).triggerHandler('puzzle:move');
+      let emptyTile = this._findEmptyTileSameRowCol(row, col);
+      if (emptyTile !== null) {
+        this._moveTiles({row: row, col: col}, emptyTile);
+        $(document).triggerHandler('puzzle:move');
 
-				if ((this._state === this._States.SCRAMBLED
-						|| this._state === this._States.SOLVING)
-						&& this.isSolved()) {
-					this._state = this._States.SOLVED;
-					$(document).triggerHandler('puzzle:solved');
-					this._animateSolved();
-				}
-			}
-		}
+        if ((this._state === this._States.SCRAMBLED
+            || this._state === this._States.SOLVING)
+            && this.isSolved()) {
+          this._state = this._States.SOLVED;
+          $(document).triggerHandler('puzzle:solved');
+          this._animateSolved();
+        }
+      }
+    }
 
-		/*
-		 * Executes a sequence of moves provided as an array of
-		 * `{row: row, col: col}` objects.
-		 */
-		moveSequence(sequence) {
-				let pos = sequence.shift();
-				if (pos) {
-					this.move(pos.row, pos.col);
-					setTimeout(this.moveSequence.bind(this, sequence), 3 * TimeConstants.SLIDE);
-				}
-		}
+    /*
+     * Executes a sequence of moves provided as an array of
+     * `{row: row, col: col}` objects.
+     */
+    moveSequence(sequence) {
+        let pos = sequence.shift();
+        if (pos) {
+          this.move(pos.row, pos.col);
+          setTimeout(this.moveSequence.bind(this, sequence), 3 * TimeConstants.SLIDE);
+        }
+    }
 
-		isSolved() {
-			for (let row = 0; row < this.size; row++) {
-				for (let col = 0; col < this.size; col++) {
-					let num = row * this.size + col + 1;
-					if (this.tiles[row][col].number !== num) {
-						return false;
-					}
-				}
-			}
+    isSolved() {
+      for (let row = 0; row < this.size; row++) {
+        for (let col = 0; col < this.size; col++) {
+          let num = row * this.size + col + 1;
+          if (this.tiles[row][col].number !== num) {
+            return false;
+          }
+        }
+      }
 
-			return true;
-		}
+      return true;
+    }
 
-		/*
-		 * Takes a state represented as an array of numbers and puts the puzzle
-		 * in that state. Depends on the puzzle being in the solved state.
-		 */
-		_setInitialState(state) {
-			if (state.length !== this.size * this.size) {
-				throw new Error('Provided state is invalid!');
-			}
+    /*
+     * Takes a state represented as an array of numbers and puts the puzzle
+     * in that state. Depends on the puzzle being in the solved state.
+     */
+    _setInitialState(state) {
+      if (state.length !== this.size * this.size) {
+        throw new Error('Provided state is invalid!');
+      }
 
-			// Make a mapping of number labels to their location in the provided
-			// state. This prevents repeatedly searching the provided state
-			// array further down.
-			let labelToState = {};
-			state.forEach((num, i) => {
-				// Ensure valid / non-duplicate numbers are provided.
-				num = Number(num);
-				if (num <= 0
-						|| num > this.size * this.size
-						|| isNaN(num)
-						|| num in labelToState) {
-					throw new Error('Provided state is invalid!');
-				}
+      // Make a mapping of number labels to their location in the provided
+      // state. This prevents repeatedly searching the provided state
+      // array further down.
+      let labelToState = {};
+      state.forEach((num, i) => {
+        // Ensure valid / non-duplicate numbers are provided.
+        num = Number(num);
+        if (num <= 0
+            || num > this.size * this.size
+            || isNaN(num)
+            || num in labelToState) {
+          throw new Error('Provided state is invalid!');
+        }
 
-				labelToState[num] = i;
-			});
+        labelToState[num] = i;
+      });
 
-			let newTiles = this._generateEmptyMatrix(this.size);
-			for (let row = 0; row < this.size; row++) {
-				for (let col = 0; col < this.size; col++) {
-					let curTile = this.tiles[row][col];
-					let curIndex = col + this.size * row + 1;
-					let stateIndex = labelToState[curIndex];
-					let stateRow = Math.floor(stateIndex / this.size);
-					let stateCol = stateIndex % this.size;
+      let newTiles = this._generateEmptyMatrix(this.size);
+      for (let row = 0; row < this.size; row++) {
+        for (let col = 0; col < this.size; col++) {
+          let curTile = this.tiles[row][col];
+          let curIndex = col + this.size * row + 1;
+          let stateIndex = labelToState[curIndex];
+          let stateRow = Math.floor(stateIndex / this.size);
+          let stateCol = stateIndex % this.size;
 
-					newTiles[stateRow][stateCol] = curTile;
-					curTile.move(stateRow, stateCol);
-				}
-			}
+          newTiles[stateRow][stateCol] = curTile;
+          curTile.move(stateRow, stateCol);
+        }
+      }
 
-			this.tiles = newTiles;
-			this._state = this._States.SCRAMBLED;
-		}
+      this.tiles = newTiles;
+      this._state = this._States.SCRAMBLED;
+    }
 
-		/*
-		 * Dumps the current puzzle tile state as a matrix of numbers.
-		 */
-		_dumpState() {
-			let state = [];
-			for (let row = 0; row < this.size; row++) {
-				state.push([]);
-				for (let col = 0; col < this.size; col++) {
-					state[row].push(this.tiles[row][col].number);
-				}
-			}
+    /*
+     * Dumps the current puzzle tile state as a matrix of numbers.
+     */
+    _dumpState() {
+      let state = [];
+      for (let row = 0; row < this.size; row++) {
+        state.push([]);
+        for (let col = 0; col < this.size; col++) {
+          state[row].push(this.tiles[row][col].number);
+        }
+      }
 
-			return state;
-		}
+      return state;
+    }
 
-		_hideLabels() {
-			$('div.tile').css('color', 'rgba(0,0,0,0)');
-		}
+    _hideLabels() {
+      $('div.tile').css('color', 'rgba(0,0,0,0)');
+    }
 
-		_showLabels() {
-			$('div.tile').css('color', 'rgba(0,0,0,1)');
-		}
+    _showLabels() {
+      $('div.tile').css('color', 'rgba(0,0,0,1)');
+    }
 
-		/*
-		 * Finds a solution using `solve` and executes the solution on the
-		 * puzzle.
-		 */
-		solve() {
-			if (this._state !== this._States.SCRAMBLED) {
-				return;
-			}
+    /*
+     * Finds a solution using `solve` and executes the solution on the
+     * puzzle.
+     */
+    solve() {
+      if (this._state !== this._States.SCRAMBLED) {
+        return;
+      }
 
-			this._state = this._States.SOLVING;
-			let path = solve(this._dumpState());
-			this.moveSequence.bind(this, path)();
-		}
+      this._state = this._States.SOLVING;
+      let path = solve(this._dumpState());
+      this.moveSequence.bind(this, path)();
+    }
 
-		_generateEmptyMatrix(size) {
-			let matrix = [];
-			for (let i = 0; i < size; i++) {
-				matrix.push(Array(size));
-			}
+    _generateEmptyMatrix(size) {
+      let matrix = [];
+      for (let i = 0; i < size; i++) {
+        matrix.push(Array(size));
+      }
 
-			return matrix;
-		}
+      return matrix;
+    }
 
-		/*
-		 * Restores the puzzle to the solved state.
-		 *
-		 * Works by creating a new tile array, putting the tiles in the right
-		 * place, then replacing `this.tiles` with the new array.
-		 */
-		reset() {
-			let newTiles = this._generateEmptyMatrix(this.size);
-			for (let row = 0; row < this.size; row++) {
-				for (let col = 0; col < this.size; col++) {
-					let curTile = this.tiles[row][col];
-					let curNum = curTile.number;
-					let curRow = Math.floor((curNum - 1) / this.size);
-					let curCol = (curNum - 1) % this.size;
+    /*
+     * Restores the puzzle to the solved state.
+     *
+     * Works by creating a new tile array, putting the tiles in the right
+     * place, then replacing `this.tiles` with the new array.
+     */
+    reset() {
+      let newTiles = this._generateEmptyMatrix(this.size);
+      for (let row = 0; row < this.size; row++) {
+        for (let col = 0; col < this.size; col++) {
+          let curTile = this.tiles[row][col];
+          let curNum = curTile.number;
+          let curRow = Math.floor((curNum - 1) / this.size);
+          let curCol = (curNum - 1) % this.size;
 
-					newTiles[curRow][curCol] = curTile;
-					curTile.move(curRow, curCol);
-				}
-			}
+          newTiles[curRow][curCol] = curTile;
+          curTile.move(curRow, curCol);
+        }
+      }
 
-			this.tiles = newTiles;
-			this._state = this._States.SOLVED;
-		}
+      this.tiles = newTiles;
+      this._state = this._States.SOLVED;
+    }
 
-		/*
-		 * Scrambles the puzzle.
-		 *
-		 * The idea is to move the empty tile around randomly for about
-		 * `C * numTiles` moves, where `C` is large.
-		 */
-		scramble() {
-			if (this.blind) {
-				this._showLabels();
-			}
+    /*
+     * Scrambles the puzzle.
+     *
+     * The idea is to move the empty tile around randomly for about
+     * `C * numTiles` moves, where `C` is large.
+     */
+    scramble() {
+      if (this.blind) {
+        this._showLabels();
+      }
 
-			// Prevent scrambling while the puzzle is in states like SOLVING.
-			if (this._state !== this._States.SOLVED
-					&& this._state !== this._States.SCRAMBLED) {
-				return;
-			}
+      // Prevent scrambling while the puzzle is in states like SOLVING.
+      if (this._state !== this._States.SOLVED
+          && this._state !== this._States.SCRAMBLED) {
+        return;
+      }
 
-			this._state = this._States.SCRAMBLING;
-			this._hideEmptyTile();
+      this._state = this._States.SCRAMBLING;
+      this._hideEmptyTile();
 
-			let numTiles = this.size * this.size;
-			let numMoves = 30 * numTiles;
+      let numTiles = this.size * this.size;
+      let numMoves = 30 * numTiles;
 
-			let pos = this._findEmptyTile();
-			let emptyTile = this.tiles[pos.row][pos.col];
-			for (let i = 0; i < numMoves; i++) {
-				let row = emptyTile.row;
-				let col = emptyTile.col;
-				let direction = Math.floor(4 * Math.random());
+      let pos = this._findEmptyTile();
+      let emptyTile = this.tiles[pos.row][pos.col];
+      for (let i = 0; i < numMoves; i++) {
+        let row = emptyTile.row;
+        let col = emptyTile.col;
+        let direction = Math.floor(4 * Math.random());
 
-				if (direction === 0 && row - 1 >= 0) {
-					row = row - 1;
-				}
-				else if (direction === 1 && row + 1 < this.size) {
-					row = row + 1;
-				}
-				else if (direction === 2 && col - 1 >= 0) {
-					col = col - 1;
-				}
-				else if (direction === 3 && col + 1 < this.size) {
-					col = col + 1;
-				}
+        if (direction === 0 && row - 1 >= 0) {
+          row = row - 1;
+        }
+        else if (direction === 1 && row + 1 < this.size) {
+          row = row + 1;
+        }
+        else if (direction === 2 && col - 1 >= 0) {
+          col = col - 1;
+        }
+        else if (direction === 3 && col + 1 < this.size) {
+          col = col + 1;
+        }
 
-				this.move(row, col);
-			}
+        this.move(row, col);
+      }
 
-			this._state = this._States.SCRAMBLED;
-			$(document).triggerHandler('puzzle:scramble');
-		}
+      this._state = this._States.SCRAMBLED;
+      $(document).triggerHandler('puzzle:scramble');
+    }
 
-		_hideEmptyTile() {
-			let pos = this._findEmptyTile();
-			this.tiles[pos.row][pos.col].hide();
-		}
+    _hideEmptyTile() {
+      let pos = this._findEmptyTile();
+      this.tiles[pos.row][pos.col].hide();
+    }
 
-		_animateSolved() {
-			if (this.blind) {
-				this._showLabels();
-			}
+    _animateSolved() {
+      if (this.blind) {
+        this._showLabels();
+      }
 
-			for (let row of this.tiles) {
-				for (let tile of row) {
-					tile.animateSolved();
-				}
-			}
-		}
-	}
+      for (let row of this.tiles) {
+        for (let tile of row) {
+          tile.animateSolved();
+        }
+      }
+    }
+  }
 
-	return Puzzle;
+  return Puzzle;
 })();

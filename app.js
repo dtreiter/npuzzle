@@ -2,36 +2,36 @@ import {Puzzle} from './puzzle.js';
 import {Controls} from './controls.js';
 
 export const App = {
-	controller: function() {
-		// TODO Make puzzle a mithril component.
-		// Create puzzle instance.
-		let size = Number(m.route.param('size'));
-		if (size < 3 || isNaN(size)) {
-			size = 3;
-		} else if (size > 5) {
-			size = 5;
-		}
+  controller: function() {
+    // TODO Make puzzle a mithril component.
+    // Create puzzle instance.
+    let size = Number(m.route.param('size'));
+    if (size < 3 || isNaN(size)) {
+      size = 3;
+    } else if (size > 5) {
+      size = 5;
+    }
 
-		let initialState = m.route.param('state');
-		if (initialState) {
-			initialState = initialState.split(',');
-		}
+    let initialState = m.route.param('state');
+    if (initialState) {
+      initialState = initialState.split(',');
+    }
 
-		let blind = Boolean(m.route.param('blind'));
+    let blind = Boolean(m.route.param('blind'));
 
-		let puzzle = new Puzzle({
-			$container: $('#puzzle'),
-			size: size,
-			blind: blind,
-			initialState: initialState
-		});
+    let puzzle = new Puzzle({
+      $container: $('#puzzle'),
+      size: size,
+      blind: blind,
+      initialState: initialState
+    });
 
-		return {
-			puzzle: puzzle
-		};
-	},
+    return {
+      puzzle: puzzle
+    };
+  },
 
-	view: function(ctrl) {
-		return m.component(Controls, {puzzle: ctrl.puzzle})
-	}
+  view: function(ctrl) {
+    return m.component(Controls, {puzzle: ctrl.puzzle})
+  }
 };
