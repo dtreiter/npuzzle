@@ -1,10 +1,8 @@
+@import "typography.css";
+@import "button.css";
+
 body {
   background-color: #eeeeee;
-}
-
-div#page {
-  top: 2%;
-  position: relative;
 }
 
 div#puzzle {
@@ -16,6 +14,7 @@ div#puzzle {
 }
 
 div#controls {
+  background-color: #e6e6e6;
   text-align: center;
 }
 
@@ -36,54 +35,3 @@ div.hidden {
   opacity: 0;
 }
 
-button.btn-wide {
-  min-width: 40%;
-  font-size: 16px;
-}
-
-div.well {
-  background-color: #e6e6e6;
-}
-
-h3 {
-  margin-top: 10px;
-  margin-bottom: 0px;
-}
-
-.button {
-  --l: 70%;
-  --c: 0.5;
-  --h: 25;
-
-  background-color: oklch(var(--l) var(--c) var(--h));
-  text-transform: uppercase;
-  border-radius: 4px;
-  padding: 8px;
-  margin: 4px;
-  color: white;
-  font-weight: bold;
-  font-size: 18px;
-  line-height: 2;
-  border: 0;
-  min-width: 150px;
-
-  &:hover {
-    background-color: oklch(calc(var(--l) - 5%) var(--c) var(--h));
-  }
-
-  &:active {
-    background-color: oklch(calc(var(--l) - 15%) var(--c) var(--h));
-  }
-
-  &.primary {
-    --l: 70%;
-    --c: 0.15;
-    --h: 262;
-  }
-
-  &.secondary {
-    --l: 78%;
-    --c: 0.15;
-    --h: 65;
-  }
-}
