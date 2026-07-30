@@ -14,11 +14,15 @@ body {
   padding: 8px;
 }
 
+.puzzle-container {
+  width: 100%;
+  max-width: 480px;
+}
+
 div#puzzle {
   position: relative;
   margin: auto;
   margin-bottom: 2%;
-  width: 480px;
   border-radius: 5px;
 }
 
