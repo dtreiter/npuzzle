@@ -5,16 +5,26 @@ body {
   background-color: #eeeeee;
 }
 
+.container {
+  display: flex;
+  justify-content: center;
+}
+
+.padded {
+  padding: 8px;
+}
+
 div#puzzle {
   position: relative;
   margin: auto;
   margin-bottom: 2%;
-  max-width: 480px;
+  width: 480px;
   border-radius: 5px;
 }
 
 div#controls {
   background-color: #e6e6e6;
+  border-radius: 16px;
   text-align: center;
 }
 
