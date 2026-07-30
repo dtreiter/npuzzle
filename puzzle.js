@@ -73,7 +73,7 @@ export const Puzzle = (() => {
      * Visually shakes the tile.
      */
     async animateSolved() {
-      const rotation = 3; // Degrees
+      const rotation = 5; // Degrees
       const el = this.$el[0];
 
       const straighten = () => {
