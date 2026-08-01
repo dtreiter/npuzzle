@@ -1,4 +1,9 @@
 import {solve} from './solver.js';
+import {
+  fadeAndScale,
+  rotate,
+  translate
+} from './animate.js';
 
 const TimeConstants = {
   SLIDE: 50,
@@ -37,17 +42,10 @@ class Tile {
 
   move(row, col) {
     const pos = this._getRectPosition(row, col);
-    this.$el[0].animate(
-      [
-        {
-          left: pos.x,
-          top: pos.y,
-        }
-      ],
-      {
-        duration: TimeConstants.SLIDE,
-        fill: 'forwards',
-      }
+    translate({
+      el: this.$el[0],
+      pos,
+      duration: TimeConstants.SLIDE}
     );
 
     this.row = row;
@@ -59,18 +57,12 @@ class Tile {
   }
 
   hide() {
-    this.$el[0].animate(
-      [
-        {
-          opacity: 0,
-          scale: 0.8,
-        }
-      ],
-      {
-        duration: TimeConstants.FADE,
-        fill: 'forwards',
-      }
-    );
+    fadeAndScale({
+      el: this.$el[0],
+      opacity: 0,
+      scale: 0.8,
+      duration: TimeConstants.FADE,
+    });
   }
 
   /*
@@ -81,39 +73,31 @@ class Tile {
     const el = this.$el[0];
 
     const straighten = () => {
-      return el.animate(
-        [{transform: 'rotate(0deg)'}],
-        {
-          duration: TimeConstants.SHAKE,
-          fill: 'forwards',
-        }
-      ).finished;
+      return rotate({
+        el,
+        degrees: 0,
+        duration: TimeConstants.SHAKE
+      });
     };
 
     const shake = async () => {
-      await el.animate([
-          {
-            transform: `rotate(${rotation}deg)`,
-            scale: 1,
-            opacity: 1.0,
-          }
-        ],
-        {
-          duration: TimeConstants.SHAKE,
-          fill: 'forwards',
-        }
-      ).finished;
-
-      await el.animate([
-          {
-            transform: `rotate(${-rotation}deg)`,
-          }
-        ],
-        {
-          duration: TimeConstants.SHAKE,
-          fill: 'forwards',
-        }
-      ).finished;
+      // Restore the hidden tile.
+      fadeAndScale({
+        el,
+        scale: 1,
+        opacity: 1.0,
+        duration: TimeConstants.SHAKE,
+      });
+      await rotate({
+        el,
+        degrees: rotation,
+        duration: TimeConstants.SHAKE,
+      });
+      await rotate({
+        el,
+        degrees: -rotation,
+        duration: TimeConstants.SHAKE
+      });
     }
 
     await shake();
