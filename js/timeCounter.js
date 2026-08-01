@@ -1,9 +1,9 @@
 export const TimeCounter = {
   controller: function() {
-    var isTiming = m.prop(false);
-    var start = m.prop(null);
-    var defaultLabel = '0:00.00';
-    var label = m.prop(defaultLabel);
+    const isTiming = m.prop(false);
+    const start = m.prop(null);
+    const defaultLabel = '0:00.00';
+    const label = m.prop(defaultLabel);
 
     $(document).on('puzzle:move', function() {
       if (!isTiming()) {
@@ -23,7 +23,7 @@ export const TimeCounter = {
     });
 
     // Formats a number to be 2 digits.
-    var _formatTwoDigits = function(num) {
+    const _formatTwoDigits = function(num) {
       num = Math.floor(num);
       if (num < 10) {
         return '0' + num;
@@ -32,18 +32,18 @@ export const TimeCounter = {
       return String(num);
     };
 
-    var updateTime = function() {
+    const updateTime = function() {
       if (!isTiming()) {
         return;
       }
 
       // Subtraction using JavaScript's Date object just gives us a time in
       // milliseconds, so we have to do some manual math here.
-      let elapsed = new Date() - start();
-      let milliSeconds = _formatTwoDigits((elapsed % 1000) / 10);
-      let seconds = _formatTwoDigits((elapsed / 1000) % 60);
-      let minutes = Math.floor(elapsed / 1000 / 60);
-      let newLabel = `${minutes}:${seconds}.${milliSeconds}`;
+      const elapsed = new Date() - start();
+      const milliSeconds = _formatTwoDigits((elapsed % 1000) / 10);
+      const seconds = _formatTwoDigits((elapsed / 1000) % 60);
+      const minutes = Math.floor(elapsed / 1000 / 60);
+      const newLabel = `${minutes}:${seconds}.${milliSeconds}`;
 
       label(newLabel);
       m.redraw(); // TODO Avoid manual redrawing.

@@ -17,9 +17,9 @@ export const App = {
       initialState = initialState.split(',');
     }
 
-    let blind = Boolean(m.route.param('blind'));
+    const blind = Boolean(m.route.param('blind'));
 
-    let puzzle = new Puzzle({
+    const puzzle = new Puzzle({
       $container: $('#puzzle'),
       size: size,
       blind: blind,

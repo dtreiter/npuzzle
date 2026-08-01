@@ -2,8 +2,8 @@
  * Finds a solution using a simple BFS.
  */
 
-let _findEmptyTile = (state) => {
-  let emptyNum = state.length * state.length;
+function findEmptyTile(state) {
+  const emptyNum = state.length * state.length;
   for (let row = 0; row < state.length; row++) {
     for (let col = 0; col < state.length; col++) {
       if (state[row][col] === emptyNum) {
@@ -16,9 +16,9 @@ let _findEmptyTile = (state) => {
   }
 };
 
-let _getPossibleMoves = (state) => {
-  let moves = [];
-  let empty = _findEmptyTile(state);
+function getPossibleMoves(state) {
+  const moves = [];
+  const empty = findEmptyTile(state);
   if (empty.row - 1 >= 0) {
     moves.push({
       row: empty.row - 1,
@@ -47,24 +47,24 @@ let _getPossibleMoves = (state) => {
   return moves;
 };
 
-let _moveState = (move, state) => {
-  let empty = _findEmptyTile(state);
-  let emptyNum = state.length * state.length;
-  let newState = state.map((row) => {
+function moveState(move, state) {
+  const empty = findEmptyTile(state);
+  const emptyNum = state.length * state.length;
+  const newState = state.map((row) => {
     return row.slice();
   });
 
-  let moveNum = state[move.row][move.col];
+  const moveNum = state[move.row][move.col];
   newState[empty.row][empty.col] = moveNum;
   newState[move.row][move.col] = emptyNum;
 
   return newState;
 };
 
-let _isStateSolved = (state) => {
+function isStateSolved(state) {
   for (let row = 0; row < state.length; row++) {
     for (let col = 0; col < state.length; col++) {
-      let num = row * state.length + col + 1;
+      const num = row * state.length + col + 1;
       if (state[row][col] !== num) {
         return false;
       }
@@ -74,29 +74,29 @@ let _isStateSolved = (state) => {
   return true;
 };
 
-let bfs = (initialState) => {
-  let visited = {};
+export function bfs(initialState) {
+  const visited = {};
   visited[initialState] = true;
-  let queue = [{
+  const queue = [{
     state: initialState,
     path: []
   }];
 
   while (queue.length > 0) {
-    let node = queue.shift();
-    if (_isStateSolved(node.state)) {
+    const node = queue.shift();
+    if (isStateSolved(node.state)) {
       return node.path;
     }
 
-    let possibleMoves = _getPossibleMoves(node.state);
+    const possibleMoves = getPossibleMoves(node.state);
     for (let move of possibleMoves) {
-      let nextState = _moveState(move, node.state);
+      const nextState = moveState(move, node.state);
       if (nextState in visited) {
         continue;
       }
 
       visited[nextState] = true;
-      let path = node.path.concat({row: move.row, col: move.col});
+      const path = node.path.concat({row: move.row, col: move.col});
 
       queue.push({
         state: nextState,
