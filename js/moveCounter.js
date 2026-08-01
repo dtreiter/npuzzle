@@ -1,21 +1,18 @@
-export const MoveCounter = {
-  controller: function() {
-    var count = m.prop(0);
-    $(document).on('puzzle:move', function() {
-      count(count() + 1);
-      m.redraw(); // TODO
+export class MoveCounter {
+  constructor() {
+    this.count = 0;
+    $(document).on('puzzle:move', () => {
+      this.count = this.count + 1;
+      m.redraw();
     });
 
-    $(document).on('puzzle:scramble', function() {
-      count(0);
+    $(document).on('puzzle:scramble', () => {
+      this.count = 0;
+      m.redraw();
     });
-
-    return {
-      count: count
-    };
-  },
-
-  view: function(ctrl) {
-    return m('h3', 'Moves: ' + ctrl.count());
   }
-};
+
+  view() {
+    return m('h3', 'Moves: ' + this.count);
+  }
+}

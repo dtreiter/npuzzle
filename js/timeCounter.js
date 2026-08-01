@@ -1,29 +1,33 @@
-export const TimeCounter = {
-  controller: function() {
-    const isTiming = m.prop(false);
-    const start = m.prop(null);
+export class TimeCounter {
+  constructor() {
     const defaultLabel = '0:00.00';
-    const label = m.prop(defaultLabel);
 
-    $(document).on('puzzle:move', function() {
-      if (!isTiming()) {
-        isTiming(true);
-        start(new Date());
+    this.isTiming = false;
+    this.start = null;
+    this.label = defaultLabel;
+
+    $(document).on('puzzle:move', () => {
+      if (!this.isTiming) {
+        this.isTiming = true;
+        this.start = new Date();
+        m.redraw();
       }
     });
 
-    $(document).on('puzzle:scramble', function() {
-      isTiming(false);
-      start(null);
-      label(defaultLabel);
+    $(document).on('puzzle:scramble', () => {
+      this.isTiming = false;
+      this.start = null;
+      this.label = defaultLabel;
+      m.redraw();
     });
 
-    $(document).on('puzzle:solved', function() {
-      isTiming(false);
+    $(document).on('puzzle:solved', () => {
+      this.isTiming = false;
+      m.redraw();
     });
 
     // Formats a number to be 2 digits.
-    const _formatTwoDigits = function(num) {
+    const _formatTwoDigits = (num) => {
       num = Math.floor(num);
       if (num < 10) {
         return '0' + num;
@@ -32,35 +36,29 @@ export const TimeCounter = {
       return String(num);
     };
 
-    const updateTime = function() {
-      if (!isTiming()) {
+    const updateTime = () => {
+      if (!this.isTiming) {
         return;
       }
 
       // Subtraction using JavaScript's Date object just gives us a time in
       // milliseconds, so we have to do some manual math here.
-      const elapsed = new Date() - start();
+      const elapsed = new Date() - this.start;
       const milliSeconds = _formatTwoDigits((elapsed % 1000) / 10);
       const seconds = _formatTwoDigits((elapsed / 1000) % 60);
       const minutes = Math.floor(elapsed / 1000 / 60);
       const newLabel = `${minutes}:${seconds}.${milliSeconds}`;
 
-      label(newLabel);
-      m.redraw(); // TODO Avoid manual redrawing.
+      this.label = newLabel;
+      m.redraw();
     };
 
     // If we used 100 ms exactly the 2nd millisecond digit on the clock
     // would never change. Instead we use an interval slightly under 100 ms.
     setInterval(updateTime, 93);
-
-    return {
-      isTiming: isTiming,
-      start: start,
-      label: label
-    };
-  },
-
-  view: function(ctrl) {
-    return m('h3', 'Time: ' + ctrl.label());
   }
-};
+
+  view() {
+    return m('h3', 'Time: ' + this.label);
+  }
+}

@@ -1,25 +1,23 @@
 import {MoveCounter} from './moveCounter.js';
 import {TimeCounter} from './timeCounter.js';
 
-export const Controls = {
-  controller: function(args) {
-    return {
-      puzzle: args.puzzle
-    };
-  },
+export class Controls {
+  constructor(vnode) {
+    this.puzzle = vnode.attrs.puzzle;
+  }
 
-  view: function(ctrl) {
+  view() {
     return m('div', [
       m('button', {
         class: 'button primary',
-        onclick: ctrl.puzzle.scramble.bind(ctrl.puzzle)
+        onclick: this.puzzle.scramble.bind(this.puzzle)
       }, 'Scramble'),
       m('button', {
         class: 'button secondary',
-        onclick: ctrl.puzzle.solve.bind(ctrl.puzzle)
+        onclick: this.puzzle.solve.bind(this.puzzle)
       }, 'Solve'),
-      m.component(TimeCounter),
-      m.component(MoveCounter)
+      m(TimeCounter),
+      m(MoveCounter)
     ]);
   }
-};
+}

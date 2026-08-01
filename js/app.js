@@ -1,8 +1,8 @@
 import {Puzzle} from './puzzle.js';
 import {Controls} from './controls.js';
 
-export const App = {
-  controller: function() {
+export class App {
+  constructor() {
     // TODO Make puzzle a mithril component.
     // Create puzzle instance.
     let size = Number(m.route.param('size'));
@@ -26,12 +26,10 @@ export const App = {
       initialState: initialState
     });
 
-    return {
-      puzzle: puzzle
-    };
-  },
-
-  view: function(ctrl) {
-    return m.component(Controls, {puzzle: ctrl.puzzle})
+    this.puzzle = puzzle;
   }
-};
+
+  view() {
+    return m(Controls, {puzzle: this.puzzle})
+  }
+}
