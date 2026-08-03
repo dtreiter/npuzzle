@@ -41,10 +41,8 @@ export class RadioGroup {
     }
 
     return m('div', [
-      m('form', [
-        m('span', {class: 'form-label'}, [`${name}:`]),
-        radioButtons,
-      ]),
+      m('span', {class: 'form-label'}, [`${name}:`]),
+      radioButtons,
     ]);
   }
 }
