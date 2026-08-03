@@ -1,9 +1,13 @@
 import {MoveCounter} from './moveCounter.js';
+import {RadioGroup} from './radioGroup.js';
 import {TimeCounter} from './timeCounter.js';
 
 export class Controls {
-  constructor(vnode) {
-    this.puzzle = vnode.attrs.puzzle;
+  constructor({attrs}) {
+    this.puzzle = attrs.puzzle;
+    this.size = attrs.size;
+    this.blind = attrs.blind;
+    this.createPuzzle = attrs.createPuzzle;
   }
 
   view() {
@@ -16,8 +20,24 @@ export class Controls {
         class: 'button secondary',
         onclick: this.puzzle.solve.bind(this.puzzle)
       }, 'Solve'),
+      m(RadioGroup, {
+        name: 'Size',
+        initialValue: `${this.size}`,
+        options: [
+          {value: '3', label: '3'},
+          {value: '4', label: '4'},
+          {value: '5', label: '5'},
+        ],
+        onChange: (value) => {
+          this.size = value;
+          this.createPuzzle({
+            size: this.size,
+            blind: this.blind,
+          });
+        }
+      }),
       m(TimeCounter),
-      m(MoveCounter)
+      m(MoveCounter),
     ]);
   }
 }

@@ -1,0 +1,8 @@
+input[type="radio"] {
+  transform: scale(2);
+}
+
+.form-label,
+label {
+  padding: 8px;
+}

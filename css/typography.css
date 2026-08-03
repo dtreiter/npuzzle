@@ -7,6 +7,11 @@ body {
 h3 {
   margin-top: 10px;
   margin-bottom: 0px;
+}
+
+h3,
+.form-label,
+label {
   font-family: inherit;
   font-size: 22px;
   font-weight: 400;
