@@ -27,11 +27,15 @@
   border: 0;
   min-width: 150px;
 
-  &:hover {
+  &:hover:not([disabled]) {
     background-color: oklch(calc(var(--l) - 5%) var(--c) var(--h));
   }
 
-  &:active {
+  &:active:not([disabled]) {
     background-color: oklch(calc(var(--l) - 15%) var(--c) var(--h));
+  }
+
+  &[disabled] {
+    background-color: oklch(var(--l) 0.05 var(--h));
   }
 }

@@ -18,6 +18,7 @@ export class Controls {
       }, 'Scramble'),
       m('button', {
         class: 'button secondary',
+        disabled: this.size > 3 ? true : undefined,
         onclick: this.puzzle.solve.bind(this.puzzle)
       }, 'Solve'),
       m(RadioGroup, {

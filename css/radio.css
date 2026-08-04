@@ -1,4 +1,5 @@
 input[type="radio"] {
+  accent-color: cornflowerblue;
   transform: scale(2);
 }
 
