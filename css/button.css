@@ -1,21 +1,15 @@
 .button {
-  --l: 70%;
-  --c: 0.15;
-  --h: 262;
+  --bgcolor: var(--blue);
 
   &.primary {
-    --l: 70%;
-    --c: 0.15;
-    --h: 262;
+    --bgcolor: var(--blue);
   }
 
   &.secondary {
-    --l: 78%;
-    --c: 0.15;
-    --h: 65;
+    --bgcolor: var(--green);
   }
 
-  background-color: oklch(var(--l) var(--c) var(--h));
+  background-color: oklch(from var(--bgcolor) l c h);
   text-transform: uppercase;
   border-radius: 4px;
   padding: 8px;
@@ -28,14 +22,15 @@
   min-width: 150px;
 
   &:hover:not([disabled]) {
-    background-color: oklch(calc(var(--l) - 5%) var(--c) var(--h));
+    background-color: oklch(from var(--bgcolor) calc(l - 0.05) c h);
   }
 
   &:active:not([disabled]) {
-    background-color: oklch(calc(var(--l) - 15%) var(--c) var(--h));
+    background-color: oklch(from var(--bgcolor) calc(l - 0.1) c h);
   }
 
   &[disabled] {
-    background-color: oklch(var(--l) 0.05 var(--h));
+    color: var(--grey-1);
+    background-color: var(--grey-4);
   }
 }
