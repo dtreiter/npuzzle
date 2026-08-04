@@ -40,7 +40,7 @@ export class RadioGroup {
       radioButtons.push(input, label);
     }
 
-    return m('div', [
+    return m('div', {class: 'radio-group'}, [
       m('span', {class: 'form-label'}, [`${name}:`]),
       radioButtons,
     ]);
