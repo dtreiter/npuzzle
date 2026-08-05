@@ -1,4 +1,5 @@
 import m from 'mithril';
+import $ from 'jquery';
 import {Puzzle} from './puzzle.js';
 import {Controls} from './controls.js';
 

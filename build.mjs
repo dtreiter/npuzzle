@@ -58,9 +58,7 @@ async function build() {
   } catch {}
 
   await mkdir('dist');
-  await mkdir('dist/deps');
   await copyFile('src/index.html', 'dist/index.html');
-  await cp('src/deps', 'dist/deps', {recursive: true});
 
   await buildJsCss();
 }

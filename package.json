@@ -1,6 +1,7 @@
 {
   "devDependencies": {
     "esbuild": "^0.28.1",
+    "jquery": "^4.0.0",
     "mithril": "^2.3.8"
   },
   "scripts": {

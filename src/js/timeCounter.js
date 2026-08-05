@@ -1,4 +1,5 @@
 import m from 'mithril';
+import $ from 'jquery';
 
 export class TimeCounter {
   constructor() {

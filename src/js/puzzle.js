@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import {solve} from './solver.js';
 import {
   fadeAndScale,
