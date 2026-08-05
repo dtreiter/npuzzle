@@ -1,11 +1,14 @@
 {
   "devDependencies": {
+    "@types/jquery": "^4.0.1",
+    "@types/mithril": "^2.2.8",
     "esbuild": "^0.28.1",
     "jquery": "^4.0.0",
-    "mithril": "^2.3.8"
+    "mithril": "^2.3.8",
+    "typescript": "^7.0.2"
   },
   "scripts": {
-    "build": "node build.mjs",
-    "dev": "node build.mjs --watch"
+    "build": "tsc && node build.mjs",
+    "dev": "tsc && node build.mjs --watch"
   }
 }

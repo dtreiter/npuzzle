@@ -13,7 +13,7 @@ async function buildJsCss() {
   if (isWatch) {
     // Use the context API for rebuilding on file save
     const js = await esbuild.context({
-      entryPoints: ['src/js/index.js'],
+      entryPoints: ['src/js/index.ts'],
       outfile: 'dist/bundle.js',
       bundle: true,
       minify: false,
@@ -32,7 +32,7 @@ async function buildJsCss() {
     console.log('Watching for changes...');
   } else {
     const js = esbuild.build({
-      entryPoints: ['src/js/index.js'],
+      entryPoints: ['src/js/index.ts'],
       outfile: 'dist/bundle.js',
       bundle: true,
       minify: true,

@@ -1,10 +1,7 @@
 # N-Puzzle
 
 This is N-Puzzle, a work-in-progress remake of the classic 15 Puzzle game.
-Although it doesn't have UI controls for it yet, the puzzle can be configured to
-be any size.
+The puzzle can be configured to be several sizes, and includes a basic solver.
+It also supports a blind mode, which requires solving the puzzle from memory.
 
-My motivation for making this is to add a 'blind mode', requiring solving the
-puzzle from memory.
-
-You can play the game [here](http://danielreiter.org/npuzzle).
+You can play the game [here](http://dtreiter.github.io/npuzzle).
