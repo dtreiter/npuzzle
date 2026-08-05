@@ -18,6 +18,8 @@ async function buildJsCss() {
       bundle: true,
       minify: false,
       sourcemap: true,
+      jsxFactory: 'm',
+      jsxFragment: 'm.Fragment',
     });
     const css = await esbuild.context({
       entryPoints: ['src/css/index.css'],
@@ -37,6 +39,8 @@ async function buildJsCss() {
       bundle: true,
       minify: true,
       sourcemap: true,
+      jsxFactory: 'm',
+      jsxFragment: 'm.Fragment',
     });
     const css = esbuild.build({
       entryPoints: ['src/css/index.css'],

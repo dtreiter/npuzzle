@@ -1,6 +1,6 @@
 import m from 'mithril';
 import {MoveCounter} from './moveCounter.js';
-import {RadioGroup} from './radioGroup.js';
+import {RadioGroup} from './radioGroup.tsx';
 import {TimeCounter} from './timeCounter.js';
 
 export class Controls {
