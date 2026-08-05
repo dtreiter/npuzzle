@@ -1,3 +1,4 @@
+import m from 'mithril';
 import {Puzzle} from './puzzle.js';
 import {Controls} from './controls.js';
 

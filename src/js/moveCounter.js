@@ -1,3 +1,5 @@
+import m from 'mithril';
+
 export class MoveCounter {
   constructor() {
     this.count = 0;

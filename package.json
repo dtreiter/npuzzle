@@ -1,6 +1,7 @@
 {
   "devDependencies": {
-    "esbuild": "^0.28.1"
+    "esbuild": "^0.28.1",
+    "mithril": "^2.3.8"
   },
   "scripts": {
     "build": "node build.mjs",

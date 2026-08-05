@@ -1,3 +1,5 @@
+import m from 'mithril';
+
 export class TimeCounter {
   constructor() {
     const defaultLabel = '0:00.00';

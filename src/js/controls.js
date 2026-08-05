@@ -1,3 +1,4 @@
+import m from 'mithril';
 import {MoveCounter} from './moveCounter.js';
 import {RadioGroup} from './radioGroup.js';
 import {TimeCounter} from './timeCounter.js';

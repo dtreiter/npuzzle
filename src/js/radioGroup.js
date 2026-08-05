@@ -1,3 +1,5 @@
+import m from 'mithril';
+
 /**
  * name: string,
  * initialValue: string,

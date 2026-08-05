@@ -1,3 +1,4 @@
+import m from 'mithril';
 import {App} from './app.js';
 
 // Use `location.hash` (i.e. #) routing convention.
